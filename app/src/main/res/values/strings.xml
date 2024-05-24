@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">ChatItt</string>
+    <string name="login_to_continue">Login to continue</string>
+    <string name="password">Password</string>
+    <string name="create_new_account">Create new account</string>
+    <string name="name">Họ tên</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="sign_in">Sign In</string>
+    <string name="select_user">Tin nhắn mới</string>
+    <string name="create_group">Tạo nhóm mới</string>
+    <string name="type_a_message">Tin nhắn</string>
+    <string name="online">Online</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="current_password">Mật khẩu hiện tại</string>
+    <string name="confirm_new_password">Xác nhận mật khẩu</string>
+    <string name="chat">Đoạn chat</string>
+    <string name="contact">Liên hệ</string>
+    <string name="settings">Cài đặt</string>
+    <string name="profile">Cá nhân</string>
+    <string name="prompt_phone">Số điện thoại</string>
+    <string name="prompt_password">Mật khẩu</string>
+    <string name="prompt_re_password">Xác nhận mật khẩu</string>
+    <string name="action_sign_in">Đăng nhập</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="forgot_password">Quên mật khẩu</string>
+    <string name="add_image">Thêm ảnh</string>
+    <string name="welcome_back">Welcome back</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="HomeActivity.Button" parent="TextAppearance.AppCompat.Button">
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="CustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/_18ssp</item>
+        <!-- Các thuộc tính văn bản khác -->
+    </style>
+    <style name="circular">
+        <item name="cornerSize">50%</item>
+    </style>
+    <style name="card">
+        <item name="cornerSize">10%</item>
+    </style>
+</resources>
