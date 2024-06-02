@@ -1,13 +1,23 @@
 package com.example.chatitt.ultilities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 
 public class Helpers {
+    public static void showToast(Context context, String msg){
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+    }
     public static void setupUI(View view, Activity activity) {
 
         // Set up touch listener for non-text box views to hide keyboard.
@@ -42,6 +52,19 @@ public class Helpers {
                 activity.getCurrentFocus().clearFocus();
             }
 
+        }
+    }
+    public static String encodeImage(Bitmap bitmap){
+        int previewWidth = 150;
+        int previewHeight = bitmap.getHeight()*previewWidth/bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return Base64.getEncoder().encodeToString(bytes);
+        }else{
+            return null;
         }
     }
 }

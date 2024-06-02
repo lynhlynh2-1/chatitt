@@ -18,7 +18,7 @@
     <string name="contact">Liên hệ</string>
     <string name="settings">Cài đặt</string>
     <string name="profile">Cá nhân</string>
-    <string name="prompt_phone">Số điện thoại</string>
+    <string name="email">Email</string>
     <string name="prompt_password">Mật khẩu</string>
     <string name="prompt_re_password">Xác nhận mật khẩu</string>
     <string name="action_sign_in">Đăng nhập</string>

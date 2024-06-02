@@ -77,8 +77,8 @@
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_weight="1"
                 android:background="@color/md_theme_light_background"
-                android:hint="@string/prompt_phone"
-                android:inputType="phone"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
                 android:textSize="@dimen/_12ssp"
                 android:importantForAutofill="no" />
 

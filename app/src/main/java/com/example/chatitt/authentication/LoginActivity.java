@@ -12,6 +12,7 @@ import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 

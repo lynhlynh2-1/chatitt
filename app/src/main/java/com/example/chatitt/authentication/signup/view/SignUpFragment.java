@@ -1,66 +1,429 @@
 package com.example.chatitt.authentication.signup.view;
 
+import static com.example.chatitt.ultilities.Helpers.encodeImage;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.chatitt.MainActivity;
 import com.example.chatitt.R;
+import com.example.chatitt.authentication.model.User;
+import com.example.chatitt.authentication.signup.presenter.SignUpContract;
+import com.example.chatitt.authentication.signup.presenter.SignUpPresenter;
+import com.example.chatitt.databinding.FragmentSignupBinding;
+import com.example.chatitt.ultilities.Constants;
+import com.example.chatitt.ultilities.Helpers;
+import com.example.chatitt.ultilities.PreferenceManager;
+import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SignUpFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class SignUpFragment extends Fragment {
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
+import java.util.HashMap;
+import java.util.Objects;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class SignUpFragment extends Fragment implements SignUpContract.ViewInterface {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private FragmentSignupBinding binding;
+    private String encodedImage;
+    private Boolean isHidePassEdt = true;
+    private Boolean isHideRePassEdt = true;
+    private PreferenceManager preferenceManager;
+    private SignUpPresenter signUpPresenter;
+    FirebaseAuth firebaseAuth;
+    FirebaseFirestore db;
 
-    public SignUpFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SignupFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SignUpFragment newInstance(String param1, String param2) {
-        SignUpFragment fragment = new SignUpFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_signup, container, false);
+        // Inflate layout using DataBindingUtil
+        binding = FragmentSignupBinding.inflate(inflater, container, false);
+
+        // Get the root view from the binding
+        View rootView = binding.getRoot();
+        preferenceManager = new PreferenceManager(requireContext());
+        signUpPresenter = new SignUpPresenter(requireContext(),this, preferenceManager);
+        Helpers.setupUI(binding.signupFragment, requireActivity());
+        firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+
+        checkEnableSignup();
+        setListener();
+        onEditTextStatusChange();
+        return rootView;
     }
+
+    private void checkEnableSignup(){
+        binding.edtPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                binding.signup.setEnabled(!binding.edtPhone.getText().toString().trim().isEmpty() && !binding.edtPass.getText().toString().trim().isEmpty() && !binding.edtUsername.getText().toString().trim().isEmpty() && !binding.reEdtPass.getText().toString().trim().isEmpty() && encodedImage != null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        binding.edtPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                binding.signup.setEnabled(!binding.edtPhone.getText().toString().trim().isEmpty() && !binding.edtPass.getText().toString().trim().isEmpty() && !binding.edtUsername.getText().toString().trim().isEmpty() && !binding.reEdtPass.getText().toString().trim().isEmpty() && encodedImage != null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        binding.edtUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                binding.signup.setEnabled(!binding.edtPhone.getText().toString().trim().isEmpty() && !binding.edtPass.getText().toString().trim().isEmpty() && !binding.edtUsername.getText().toString().trim().isEmpty() && !binding.reEdtPass.getText().toString().trim().isEmpty() && encodedImage != null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        binding.reEdtPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                binding.signup.setEnabled(!binding.edtPhone.getText().toString().trim().isEmpty() && !binding.edtPass.getText().toString().trim().isEmpty() && !binding.edtUsername.getText().toString().trim().isEmpty() && !binding.reEdtPass.getText().toString().trim().isEmpty() && encodedImage != null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void setListener(){
+
+        binding.signup.setOnClickListener(view -> {
+            loading(true);
+            User user = new User(binding.edtPhone.getText().toString().trim(),
+                    binding.edtPass.getText().toString().trim(),
+                    binding.reEdtPass.getText().toString().trim(),
+                    encodedImage,
+                    binding.edtUsername.getText().toString().trim());
+            if (isValidSignUpDetails(user)){
+//                signUpPresenter.
+                loading(true);
+                db.collection(Constants.KEY_COLLECTION_USERS).whereEqualTo(Constants.KEY_EMAIL, user.getEmail())
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                QuerySnapshot querySnapshot = task.getResult();
+
+                                // Email đã tồn tại
+                                // Email không tồn tại
+                                if(querySnapshot != null && !querySnapshot.isEmpty()){
+                                    loading(false);
+                                    binding.edtPhone.setBackgroundResource(R.drawable.background_input_wrong);
+                                    int colorEror = ContextCompat.getColor(requireContext(), R.color.error);
+                                    binding.edtPhone.setHintTextColor(colorEror);
+                                    binding.status.setText("Email đã dùng để đăng ký. Hãy thử lại với email khác!");
+                                    binding.status.setVisibility(View.VISIBLE);
+                                }else {
+                                    signup(user.getAvatar(), user.getUsername(), user.getEmail(), user.getPassword());
+
+                                }
+                            } else {
+                                // Xử lý lỗi truy vấn
+                                loading(false);
+                                binding.status.setText("Lỗi!!");
+                                binding.status.setVisibility(View.VISIBLE);
+                            }
+                        });
+
+            }else
+
+                loading(false);
+        });
+        binding.layoutImage.setOnClickListener(v -> {
+            onUpdateProfileImgPressed();
+        });
+        binding.imgShowPass.setOnClickListener(view ->{
+            if(isHidePassEdt){
+                binding.edtPass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                binding.imgShowPass.setImageResource(R.drawable.red);
+                isHidePassEdt = false;
+            }else {
+                binding.edtPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                binding.imgShowPass.setImageResource(R.drawable.ic_remove_red_eye);
+                isHidePassEdt = true;
+            }
+        });
+        binding.reImgShowPass.setOnClickListener(view ->{
+            if(isHideRePassEdt){
+                binding.reEdtPass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                binding.reImgShowPass.setImageResource(R.drawable.red);
+                isHideRePassEdt = false;
+            }else {
+                binding.reEdtPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                binding.reImgShowPass.setImageResource(R.drawable.ic_remove_red_eye);
+                isHideRePassEdt = true;
+            }
+        });
+    }
+
+    void signup(String avatar, String username,String email, String password){
+        HashMap<String, Object> user = new HashMap<>();
+        user.put(Constants.KEY_NAME, username);
+        user.put(Constants.KEY_EMAIL, email);
+        user.put(Constants.KEY_AVATAR, avatar);
+        firebaseAuth.createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        System.out.println("create success");
+                        if(firebaseAuth.getCurrentUser() != null){
+                            user.put("id", firebaseAuth.getCurrentUser().getUid());
+                        }
+                        DocumentReference userInfor = db.collection(Constants.KEY_COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid());
+                        userInfor.set(user).addOnSuccessListener(documentReference -> {
+                                    preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+                                    preferenceManager.putString(Constants.KEY_USED_ID, firebaseAuth.getCurrentUser().getUid());
+                                    preferenceManager.putString(Constants.KEY_NAME,username);
+                                    preferenceManager.putString(Constants.KEY_AVATAR, avatar);
+                                    preferenceManager.putString(Constants.KEY_EMAIL, email);
+                                    onSignUpSuccess();
+                                })
+                                .addOnFailureListener(exception ->{
+                                    onSignUpFail(exception.getMessage());
+                                });
+
+                    } else {
+                        Log.d("SignUpFragment", "signup: "+ task.getException());
+                        // If sign in fails, display a message to the user.
+                        onSignUpFail("Đăng ký thất bại!");
+                    }
+                });
+    }
+
+    private Boolean isValidSignUpDetails(User user){
+        int colorEror = ContextCompat.getColor(requireActivity(), R.color.md_theme_light_error);
+        int colorDefault = ContextCompat.getColor(requireActivity(), R.color.black);
+
+        if(user.getEmail().isEmpty()){
+            binding.password.setBackgroundResource(R.drawable.edit_text_bg);
+            binding.edtPass.setTextColor(colorDefault);
+            binding.rePass.setBackgroundResource(R.drawable.edit_text_bg);
+            binding.reEdtPass.setHintTextColor(colorDefault);
+
+            binding.phone.setBackgroundResource(R.drawable.background_input_wrong);
+            binding.edtPhone.setTextColor(colorEror);
+            binding.status.setText("Hãy nhập Email!");
+            binding.status.setVisibility(View.VISIBLE);
+            return false;
+        }else if(!user.isValidEmail()){
+            binding.password.setBackgroundResource(R.drawable.edit_text_bg);
+            binding.edtPass.setTextColor(colorDefault);
+            binding.rePass.setBackgroundResource(R.drawable.edit_text_bg);
+            binding.reEdtPass.setHintTextColor(colorDefault);
+
+            binding.phone.setBackgroundResource(R.drawable.background_input_wrong);
+            binding.edtPhone.setTextColor(colorEror);
+            binding.status.setText("Định dạng email chưa đúng!");
+            binding.status.setVisibility(View.VISIBLE);
+            return false;
+        }else if(!user.isValidPass()){
+            binding.phone.setBackgroundResource(R.drawable.edit_text_bg);
+            binding.edtPhone.setTextColor(colorDefault);
+
+            binding.password.setBackgroundResource(R.drawable.background_input_wrong);
+            binding.edtPass.setTextColor(colorEror);
+            binding.status.setText("Password cần tối thiểu 6 ký tự");
+            binding.status.setVisibility(View.VISIBLE);
+            return false;
+        }else if(!user.isConfirmPass()){
+            binding.phone.setBackgroundResource(R.drawable.edit_text_bg);
+            binding.edtPhone.setTextColor(colorDefault);
+
+            binding.password.setBackgroundResource(R.drawable.background_input_wrong);
+            binding.edtPass.setTextColor(colorEror);
+            binding.rePass.setBackgroundResource(R.drawable.background_input_wrong);
+            binding.reEdtPass.setTextColor(colorEror);
+            binding.status.setText("Hãy kiểm tra lại sao cho password trùng nhau");
+            binding.status.setVisibility(View.VISIBLE);
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    private void onEditTextStatusChange(){
+        int colorFocus = ContextCompat.getColor(requireActivity(), R.color.md_theme_light_primary);
+        int colorDefault = ContextCompat.getColor(requireActivity(), R.color.secondary_text);
+        binding.edtUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    binding.username.setBackgroundResource(R.drawable.background_input_good);
+                    binding.edtUsername.setHintTextColor(colorFocus);
+                }
+                else {
+                    binding.username.setBackgroundResource(R.drawable.edit_text_bg);
+                    binding.edtUsername.setHintTextColor(colorDefault);
+//                    if (binding.inputCurrentPass.getText().toString().isEmpty()) {
+//                        binding.inputCurrentPass.setBackgroundResource(R.drawable.background_input_wrong);
+//                    } else {
+//                        binding.inputCurrentPass.setBackgroundResource(R.drawable.background_input_good);
+//                    }
+                }
+            }
+        });
+        binding.edtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    binding.phone.setBackgroundResource(R.drawable.background_input_good);
+                    binding.edtPhone.setHintTextColor(colorFocus);
+                }
+                else {
+                    binding.phone.setBackgroundResource(R.drawable.edit_text_bg);
+                    binding.edtPhone.setHintTextColor(colorDefault);
+                }
+            }
+        });
+        binding.edtPass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    binding.password.setBackgroundResource(R.drawable.background_input_good);
+                    binding.edtPass.setHintTextColor(colorFocus);
+                }
+                else {
+                    binding.password.setBackgroundResource(R.drawable.edit_text_bg);
+                    binding.edtPass.setHintTextColor(colorDefault);
+                }
+            }
+        });
+        binding.reEdtPass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    binding.rePass.setBackgroundResource(R.drawable.background_input_good);
+                    binding.reEdtPass.setHintTextColor(colorFocus);
+                }
+                else {
+                    binding.rePass.setBackgroundResource(R.drawable.edit_text_bg);
+                    binding.reEdtPass.setHintTextColor(colorDefault);
+                }
+            }
+        });
+    }
+    private void onUpdateProfileImgPressed() {
+        ImagePicker.with(this)
+                .cropSquare()//Crop image(Optional), Check Customization for more option
+                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .createIntent(intent -> {
+                    startForProfileImageResult.launch(intent);
+                    return null;
+                });
+    }
+
+    private final ActivityResultLauncher<Intent> startForProfileImageResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (data != null && result.getResultCode() == Activity.RESULT_OK) {
+                    Uri resultUri = data.getData();
+                    binding.imageProfile.setImageURI(resultUri);
+                    binding.signup.setEnabled(!binding.edtPhone.getText().toString().trim().isEmpty() && !binding.edtPass.getText().toString().trim().isEmpty() && !binding.edtUsername.getText().toString().trim().isEmpty() && !binding.reEdtPass.getText().toString().trim().isEmpty());
+                    try {
+                        InputStream inputStream = requireActivity().getContentResolver().openInputStream(resultUri);
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        encodedImage = encodeImage(bitmap);
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }else if (result.getResultCode() == ImagePicker.RESULT_ERROR){
+                    Toast.makeText(requireActivity(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(requireActivity(), "Task Cancelled", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    @Override
+    public void onSignUpFail(String msg) {
+        loading(false);
+        binding.status.setText(msg);
+        binding.status.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onSignUpSuccess() {
+        loading(false);
+        binding.status.setVisibility(View.INVISIBLE);
+
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+    public void loading(boolean b) {
+        if (b){
+            binding.status.setVisibility(View.INVISIBLE);
+        }
+        binding.loading.setVisibility(b? View.VISIBLE : View.GONE);
+        binding.signup.setVisibility(b? View.GONE : View.VISIBLE);
+
+    }
+
 }
