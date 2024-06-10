@@ -5,7 +5,7 @@ import android.util.Patterns;
 import java.util.Objects;
 
 public class User {
-    private String email, password, re_password, avatar, publicKey, username, id, coverImage;
+    private String email, phonenumber,  password, re_password, avatar, username, id, coverImage, online, address, country, city, gender, birthday;
 
     public User(String email, String password, String re_password, String avatar, String username) {
         this.email = email;
@@ -19,7 +19,23 @@ public class User {
         this.email = email;
         this.password = password;
     }
+    public User() {
+    }
 
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
+
+    public String getOnline() {
+        return online;
+    }
+    public void setOnline(String online) {
+        this.online = online;
+    }
 
     public String getCoverImage() {
         return coverImage;
@@ -53,14 +69,6 @@ public class User {
         this.avatar = avatar;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -85,6 +93,46 @@ public class User {
         this.id = id;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
     public Boolean isValidEmail(){
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
@@ -95,4 +143,8 @@ public class User {
     public Boolean isConfirmPass(){
         return Objects.equals(password, re_password);
     }
+    public Boolean isValidPhone(){
+        return Patterns.PHONE.matcher(phonenumber).matches() && phonenumber.startsWith("0") && phonenumber.length()!=10;
+    }
+
 }

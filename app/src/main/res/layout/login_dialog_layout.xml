@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đăng nhập lại để xác nhận"
+        android:textColor="@color/md_theme_light_onSurfaceVariant"
+        android:textSize="@dimen/_20ssp"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/_21sdp"
+        android:paddingTop="@dimen/_12sdp"
+        android:paddingBottom="@dimen/_12sdp" />
+
+
+
+    <EditText
+        android:id="@+id/edit_text_email"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_21sdp"
+        android:layout_marginBottom="@dimen/_11sdp"
+        android:layout_marginEnd="@dimen/_21sdp"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_16sdp"
+        android:imeOptions="actionDone"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+        android:textSize="@dimen/_14ssp"
+        android:background="@drawable/background_input"
+        />
+    <EditText
+        android:id="@+id/edit_text_pass"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_21sdp"
+        android:layout_marginBottom="@dimen/_11sdp"
+        android:layout_marginEnd="@dimen/_21sdp"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_16sdp"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword"
+        android:hint="Mật khẩu"
+        android:textSize="@dimen/_14ssp"
+        android:background="@drawable/background_input"
+        />
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:textColor="@color/red"
+        android:visibility="gone"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_21sdp"
+        android:layout_marginBottom="@dimen/_11sdp"
+        android:layout_marginEnd="@dimen/_21sdp"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_16sdp"
+        android:textSize="@dimen/_14ssp"
+        />
+    <LinearLayout
+        android:id="@+id/container_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/_4sdp">
+
+        <Button
+            android:id="@+id/btn_Cancel"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:backgroundTint="@color/md_theme_dark_errorContainer"
+            android:textSize="@dimen/_10ssp"
+            android:text="Cancel"
+            />
+        <Button
+            android:id="@+id/btn_OK"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:textSize="@dimen/_10ssp"
+            android:text="OK"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

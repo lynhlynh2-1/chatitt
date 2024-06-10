@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ChatItt"
         tools:targetApi="31">
         <activity
+            android:name=".chats.individual_chat.create_new.view.CreatePrivateChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".authentication.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -23,8 +26,14 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"/>
+        <activity
+            android:name=".profile.view.ChangePasswordActivity"
+            android:exported="false" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
     </application>
 
 </manifest>
