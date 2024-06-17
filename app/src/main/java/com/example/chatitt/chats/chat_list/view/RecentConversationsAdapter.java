@@ -17,8 +17,6 @@ import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,7 +78,7 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
             SecretKey secretKey;
 
             String content;
-            String sender = chatMessage.getLastMessage().getUser().getUsername();
+            String sender = chatMessage.getLastMessage().getUser().getName();
 
             if (Objects.equals(sender, preferenceManager.getString(Constants.KEY_NAME))) sender = "Bạn";
             if (Objects.equals(chatMessage.getLastMessage().getType(), Constants.KEY_TYPE_IMAGE)){

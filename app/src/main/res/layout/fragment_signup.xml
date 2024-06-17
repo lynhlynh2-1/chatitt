@@ -67,7 +67,8 @@
                 android:id="@+id/imgPhone"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:src="@drawable/ic_phone"
+                android:src="@drawable/ic_email"
+                app:tint="@color/textSecondary"
                 android:importantForAccessibility="no" />
 
             <EditText

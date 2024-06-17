@@ -63,6 +63,5 @@ public class LoginActivity extends AppCompatActivity {
         tabLayoutMediator.attach();
         Helpers.setupUI(binding.loginActivity, this);
 
-
     }
 }

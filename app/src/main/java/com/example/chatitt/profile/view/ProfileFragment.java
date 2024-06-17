@@ -16,8 +16,8 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -43,6 +43,9 @@ import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.FileNotFoundException;
@@ -85,7 +88,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
         Helpers.setupUI(binding.getRoot(),requireActivity());
         init();
         setListener();
-        showUserInfo();
+//        showUserInfo();
+        profilePresenter.getProfile();
         return rootView;
     }
 
@@ -151,12 +155,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
         binding.itemEmail.btnHide.setOnClickListener(v -> onHideEmailPressed());
         binding.itemEmail.btnCancel.setOnClickListener(v -> onCancelEmailEditPressed());
         binding.itemEmail.icEdit.setOnClickListener(v -> {
-            if(FirebaseAuth.getInstance().getCurrentUser() == null){
-                onLoginAgainBeforeChangeEmail();
-            }else {
-                onEditEmailPressed();
-            }
-
+            onConfirmBeforeChangeEmail();
         });
 
         //avatar interaction
@@ -350,7 +349,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
                     @Override
                     public void onClick(View v) {
                         String newName = editTextName.getText().toString().trim();
-                        if (!newName.isEmpty() && !Patterns.DOMAIN_NAME.matcher(editTextName.getText().toString()).matches()) {
+                        if (!newName.isEmpty() && Patterns.DOMAIN_NAME.matcher(editTextName.getText().toString()).matches()) {
                             // Thay đổi tên người dùng thành newName ở đây
                             profilePresenter.updateUsername(newName);
                             alertDialog.dismiss();
@@ -364,16 +363,13 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
         alertDialog.show();
     }
 
-    private void onLoginAgainBeforeChangeEmail() {
+
+    private void onConfirmBeforeChangeEmail() {
         // Sử dụng LayoutInflater để tạo ra view từ tệp tin layout tùy chỉnh
         LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.login_dialog_layout, null);
+        View dialogView = inflater.inflate(R.layout.dialog_warning, null);
 
         // Lấy tham chiếu đến các phần tử trong layout tùy chỉnh
-        TextView textViewTitle = dialogView.findViewById(R.id.textViewTitle);
-        EditText editTextEmail= dialogView.findViewById(R.id.edit_text_email);
-        EditText editTextPass = dialogView.findViewById(R.id.edit_text_pass);
-        EditText status = dialogView.findViewById(R.id.status);
         Button buttonOK = dialogView.findViewById(R.id.btn_OK);
         Button buttonEnd = dialogView.findViewById(R.id.btn_Cancel);
 
@@ -399,18 +395,71 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
                 buttonOK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        alertDialog.dismiss();
+                        onLoginAgainBeforeChangeEmail();
+                    }
+                });
+            }
+        });
+        alertDialog.show();
+    }
+    private void onLoginAgainBeforeChangeEmail() {
+        // Sử dụng LayoutInflater để tạo ra view từ tệp tin layout tùy chỉnh
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.login_dialog_layout, null);
+
+        // Lấy tham chiếu đến các phần tử trong layout tùy chỉnh
+        TextView textViewTitle = dialogView.findViewById(R.id.textViewTitle);
+        EditText editTextEmail= dialogView.findViewById(R.id.edit_text_email);
+        EditText editTextPass = dialogView.findViewById(R.id.edit_text_pass);
+        TextView status = dialogView.findViewById(R.id.status);
+        Button buttonOK = dialogView.findViewById(R.id.btn_OK);
+        Button buttonEnd = dialogView.findViewById(R.id.btn_Cancel);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setView(dialogView);
+
+        final AlertDialog alertDialog = builder.create();
+
+        // Ngăn người dùng đóng Alert Dialog bằng cách bấm ra bên ngoài
+        alertDialog.setCanceledOnTouchOutside(false);
+
+        // Ngăn người dùng đóng Alert Dialog bằng cách bấm nút Back
+        alertDialog.setCancelable(false);
+        buttonEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.cancel();
+            }
+        });
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         String email = editTextEmail.getText().toString().trim();
                         String pass = editTextPass.getText().toString().trim();
-                        if (!email.isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(editTextEmail.getText().toString()).matches() && !pass.isEmpty()) {
-                            // Thay đổi tên người dùng thành newName ở đây
-                            if(profilePresenter.isLoginAgainSuccessfully(email, pass)){
-                                onEditEmailPressed();
-                                alertDialog.dismiss();
-                            }
-                            status.setText("Email hoặc mật khẩu chưa đúng!! Hãy thử lại!");
-                            status.setVisibility(View.VISIBLE);
+                        if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(editTextEmail.getText().toString().trim()).matches() && !pass.isEmpty()) {
+
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pass)
+                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                        @Override
+                                        public void onSuccess(AuthResult authResult) {
+                                            Helpers.showToast(requireContext(), "Đăng nhập thành công!");
+                                            startActivity(new Intent(requireActivity(), NewEmailVerificationActivity.class));
+                                            alertDialog.dismiss();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            status.setText("Email hoặc mật khẩu chưa đúng!! Hãy thử lại!");
+                                            status.setVisibility(View.VISIBLE);
+                                        }
+                                    });
                         } else {
-                            Toast.makeText(requireContext(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), "Hãy nhập đúng định dạng email, hoặc nhập đầy đủ!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -582,7 +631,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
                 binding.include.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(avatar));
                 break;
             case Constants.KEY_NAME:
-                String newName = profilePresenter.getUserModel().getUsername();
+                String newName = profilePresenter.getUserModel().getName();
                 preferenceManager.putString(Constants.KEY_NAME, newName);
                 binding.include.textName.setText(newName);
                 break;
@@ -662,18 +711,77 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
         showToast(requireContext(),"Cập nhật hồ sơ thất bại, hãy thử lại!");
     }
 
+//    @Override
+//    public void onGetProfileSuccess() {
+//        User userModel = profilePresenter.getUserModel();
+//
+//        binding.include.textName.setText(userModel.getName());
+//        preferenceManager.putString(Constants.KEY_NAME,userModel.getName());
+//
+//        binding.include.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
+//        if (userModel.getCoverImage() != null){
+//            preferenceManager.putString(Constants.KEY_COVERIMAGE, userModel.getCoverImage());
+//            binding.coverImg.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getCoverImage()));
+//        }
+//        if (userModel.getBirthday() != null){
+//            preferenceManager.putString(Constants.KEY_BIRTHDAY, userModel.getBirthday());
+//            binding.textBirthday.setText(userModel.getBirthday());
+//            binding.textBirthday.setVisibility(View.VISIBLE);
+//        }else {
+//            binding.textBirthday.setVisibility(View.GONE);
+//        }
+//        if (userModel.getGender() != null){
+//            preferenceManager.putString(Constants.KEY_GENDER, userModel.getGender());
+//            binding.textGender.setText(userModel.getGender());
+//            binding.textGender.setVisibility(View.VISIBLE);
+//        }else {
+//            binding.textGender.setVisibility(View.GONE);
+//        }
+//        if (userModel.getCity() != null){
+//            preferenceManager.putString(Constants.KEY_ADDRESS_CITY, userModel.getCity());
+//            preferenceManager.putString(Constants.KEY_ADDRESS_COUNTRY, userModel.getCountry());
+//            preferenceManager.putString(Constants.KEY_ADDRESS_DETAIL, userModel.getAddress());
+//            String city = userModel.getCity()+" (" + userModel.getCountry()+")";
+//            binding.itemAddress.textCity.setText(city);
+//            binding.itemAddress.textAddressDetail.setText(userModel.getAddress());
+//        }
+//        //email info
+//        preferenceManager.putString(Constants.KEY_EMAIL, userModel.getEmail());
+//        binding.itemEmail.textEmail.setText(userModel.getEmail());
+//        binding.itemEmail.textEmail.setVisibility(View.VISIBLE);
+//        binding.itemEmail.btnHide.setVisibility(View.GONE);
+//        binding.itemEmail.icEdit.setVisibility(View.VISIBLE);
+//
+//        if (userModel.getPhonenumber() != null){
+//            preferenceManager.putString(Constants.KEY_PHONE, userModel.getPhonenumber());
+//
+//            binding.itemPhone.textPhone.setText(userModel.getPhonenumber());
+//            binding.itemPhone.textPhone.setVisibility(View.VISIBLE);
+//            binding.itemPhone.btnAdd.setVisibility(View.GONE);
+//            binding.itemPhone.btnHide.setVisibility(View.GONE);
+//            binding.itemPhone.icEdit.setVisibility(View.VISIBLE);
+//        }
+//        binding.swipeLayout.setRefreshing(false);
+//    }
+
     @Override
     public void onGetProfileSuccess() {
         User userModel = profilePresenter.getUserModel();
 
-        binding.include.textName.setText(userModel.getUsername());
-        preferenceManager.putString(Constants.KEY_NAME,userModel.getUsername());
+        //name
+        binding.include.textName.setText(userModel.getName());
+        preferenceManager.putString(Constants.KEY_NAME,userModel.getName());
 
+        //avatar
         binding.include.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
+
+        //cover image
         if (userModel.getCoverImage() != null){
             preferenceManager.putString(Constants.KEY_COVERIMAGE, userModel.getCoverImage());
             binding.coverImg.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getCoverImage()));
         }
+
+        //birthday
         if (userModel.getBirthday() != null){
             preferenceManager.putString(Constants.KEY_BIRTHDAY, userModel.getBirthday());
             binding.textBirthday.setText(userModel.getBirthday());
@@ -681,6 +789,8 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
         }else {
             binding.textBirthday.setVisibility(View.GONE);
         }
+
+        //gender
         if (userModel.getGender() != null){
             preferenceManager.putString(Constants.KEY_GENDER, userModel.getGender());
             binding.textGender.setText(userModel.getGender());
@@ -688,21 +798,32 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
         }else {
             binding.textGender.setVisibility(View.GONE);
         }
+
+        //address
         if (userModel.getCity() != null){
             preferenceManager.putString(Constants.KEY_ADDRESS_CITY, userModel.getCity());
             preferenceManager.putString(Constants.KEY_ADDRESS_COUNTRY, userModel.getCountry());
             preferenceManager.putString(Constants.KEY_ADDRESS_DETAIL, userModel.getAddress());
+
+            binding.itemAddress.btnAdd.setVisibility(View.GONE);
+            binding.itemAddress.icHide.setVisibility(View.GONE);
+
             String city = userModel.getCity()+" (" + userModel.getCountry()+")";
             binding.itemAddress.textCity.setText(city);
             binding.itemAddress.textAddressDetail.setText(userModel.getAddress());
+        }else {
+            binding.itemAddress.icEdit.setVisibility(View.GONE);
+            binding.itemAddress.icHide.setVisibility(View.GONE);
+            binding.itemAddress.containerAddress.setVisibility(View.GONE);
         }
+
         //email info
         preferenceManager.putString(Constants.KEY_EMAIL, userModel.getEmail());
         binding.itemEmail.textEmail.setText(userModel.getEmail());
         binding.itemEmail.textEmail.setVisibility(View.VISIBLE);
         binding.itemEmail.btnHide.setVisibility(View.GONE);
-        binding.itemEmail.icEdit.setVisibility(View.VISIBLE);
 
+        //phone
         if (userModel.getPhonenumber() != null){
             preferenceManager.putString(Constants.KEY_PHONE, userModel.getPhonenumber());
 
@@ -710,7 +831,11 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
             binding.itemPhone.textPhone.setVisibility(View.VISIBLE);
             binding.itemPhone.btnAdd.setVisibility(View.GONE);
             binding.itemPhone.btnHide.setVisibility(View.GONE);
-            binding.itemPhone.icEdit.setVisibility(View.VISIBLE);
+        }else {
+            binding.itemPhone.icEdit.setVisibility(View.GONE);
+            binding.itemPhone.btnHide.setVisibility(View.GONE);
+            binding.itemPhone.btnAdd.setVisibility(View.VISIBLE);
+            binding.itemPhone.textPhone.setVisibility(View.GONE);
         }
         binding.swipeLayout.setRefreshing(false);
     }

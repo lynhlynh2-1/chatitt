@@ -32,4 +32,12 @@
     <string name="welcome_back">Welcome back</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="authen_email">Xác thực địa chỉ email</string>
+    <string name="authen_email_content">Vui lòng nhập mã OTP được gửi về email của bạn</string>
+    <string name="OTP_code">Mã OTP</string>
+    <string name="input_email_content">Vui lòng nhập địa chỉ Email</string>
+    <string name="input_new_email_content">Vui lòng nhập địa chỉ Email mới của bạn</string>
+    <string name="resent_content">Gửi lại</string>
+    <string name="email_input">Email của bạn</string>
+    <string name="new_email">Địa chỉ email mới</string>
 </resources>

@@ -74,7 +74,7 @@ public class PrivateUserAdapter extends RecyclerView.Adapter<PrivateUserAdapter.
             }
 
             binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
-            binding.textName.setText(userModel.getUsername());
+            binding.textName.setText(userModel.getName());
             binding.textRecentMessage.setText(userModel.getEmail());
             binding.textTime.setVisibility(View.GONE);
 

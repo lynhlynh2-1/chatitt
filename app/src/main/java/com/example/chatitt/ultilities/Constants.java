@@ -4,7 +4,9 @@ package com.example.chatitt.ultilities;
 import java.util.HashMap;
 
 public class Constants {
-    public static final String KEY_PREFERENCE_NAME = "ChatThem";
+
+    public static final String KEY_PREFERENCE_NAME = "ChatItt";
+    public static final String TAG = "lynh.pham";
     public static final String KEY_COLLECTION_USERS = "users";
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
@@ -27,13 +29,15 @@ public class Constants {
     public static final String KEY_COLLECTION_CHAT = "chat";
     public static final String KEY_COLLECTION_CHAT_NO_LMSG = "chatNoLastMsg";
     public static final String KEY_SENDER_ID = "senderId";
+    public static final String KEY_MEMBERS = "members";
+    public static final String KEY_LEADER = "leader";
     public static final String KEY_RECEIVER_ID = "receiverId";
     public static final String MESS_SENDER_ID = "messSenderId";
     public static final String MESS_RECEIVER_ID = "messReceiverId";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_TIMESTAMP = "timestamp";
     public static final String isSeen = "isSeen";
-    public static final String KEY_COLLECTION_CONVERSATIONS = "conversations";
+    public static final String KEY_COLLECTION_CONVERSATIONS = "chats";
 
     public static final String KEY_CONVERSATION_ID = "conversationID_it";
     public static final String KEY_SENDER_NAME = "senderName";
@@ -50,6 +54,9 @@ public class Constants {
 //    public static final List<UserGroup> userGroups = new ArrayList<>();
 //    public static final UserGroup userCurrent = new UserGroup();
     public static final String REMOTE_MSG_REGISTRATION_IDS = "registration_ids";
+    public static final String FRIEND_LIST = "friend_list";
+    public static final String MY_REQ_FRIEND_LIST = "friend_list";
+    public static final String OTHER_REQ_FRIEND_LIST = "friend_list";
 
     public static HashMap<String, String> remotoMsgHeaders = null;
 

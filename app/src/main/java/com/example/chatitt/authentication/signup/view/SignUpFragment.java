@@ -35,21 +35,14 @@ import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class SignUpFragment extends Fragment implements SignUpContract.ViewInterface {
 
@@ -168,19 +161,17 @@ public class SignUpFragment extends Fragment implements SignUpContract.ViewInter
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 QuerySnapshot querySnapshot = task.getResult();
-
-                                // Email đã tồn tại
-                                // Email không tồn tại
                                 if(querySnapshot != null && !querySnapshot.isEmpty()){
+                                    // Email đã tồn tại
                                     loading(false);
-                                    binding.edtPhone.setBackgroundResource(R.drawable.background_input_wrong);
+                                    binding.phone.setBackgroundResource(R.drawable.background_input_wrong);
                                     int colorEror = ContextCompat.getColor(requireContext(), R.color.error);
                                     binding.edtPhone.setHintTextColor(colorEror);
-                                    binding.status.setText("Email đã dùng để đăng ký. Hãy thử lại với email khác!");
+                                    binding.status.setText("Email đã tồn tại. Hãy thử lại với email khác!");
                                     binding.status.setVisibility(View.VISIBLE);
                                 }else {
-                                    signup(user.getAvatar(), user.getUsername(), user.getEmail(), user.getPassword());
-
+                                    // Email không tồn tại
+                                    signup(user.getAvatar(), user.getName(), user.getEmail(), user.getPassword());
                                 }
                             } else {
                                 // Xử lý lỗi truy vấn
@@ -231,8 +222,9 @@ public class SignUpFragment extends Fragment implements SignUpContract.ViewInter
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         System.out.println("create success");
-                        if(firebaseAuth.getCurrentUser() != null){
-                            user.put("id", firebaseAuth.getCurrentUser().getUid());
+                        FirebaseUser signedUser = task.getResult().getUser();
+                        if(signedUser != null){
+                            user.put("id", signedUser.getUid());
                         }
                         DocumentReference userInfor = db.collection(Constants.KEY_COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid());
                         userInfor.set(user).addOnSuccessListener(documentReference -> {

@@ -75,6 +75,9 @@ public class LoginFragment extends Fragment implements LogInContract.ViewInterfa
                 isHidePassEdt = true;
             }
         });
+        binding.forgotPass.setOnClickListener(view -> {
+            startActivity(new Intent(requireActivity(), EmailInputActivity.class));
+        });
     }
     private boolean isValidLoginDetails(User user) {
         int colorEror = ContextCompat.getColor(requireActivity(), R.color.md_theme_light_error);

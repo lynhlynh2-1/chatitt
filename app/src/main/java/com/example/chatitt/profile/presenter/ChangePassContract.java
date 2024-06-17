@@ -4,5 +4,6 @@ public class ChangePassContract {
     public interface ViewInterface{
         void onChangePassSuccess();
         void onChangePassError();
+        void onCurrentPassWrong();
     }
 }

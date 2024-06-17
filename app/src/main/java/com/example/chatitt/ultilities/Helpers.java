@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.crypto.SecretKey;
-
 public class Helpers {
     public static void showToast(Context context, String msg){
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
@@ -93,7 +91,7 @@ public class Helpers {
     public static List<User> checkStringContain(String searchStr, List<User> userModelList){
         List<User> result = new ArrayList<>();
         for (User u : userModelList){
-            if (u.getUsername().toLowerCase().contains(searchStr.toLowerCase())){
+            if (u.getName().toLowerCase().contains(searchStr.toLowerCase())){
                 result.add(u);
             }else if (u.getEmail().contains(searchStr)){
                 result.add(u);
@@ -176,5 +174,8 @@ public class Helpers {
     }
     public static Boolean isValidPhone(String phonenumber){
         return Patterns.PHONE.matcher(phonenumber).matches() && phonenumber.startsWith("0") && phonenumber.length()==10;
+    }
+    public static Boolean isValidEmail(String email){
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

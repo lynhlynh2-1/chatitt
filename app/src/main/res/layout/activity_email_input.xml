@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".profile.view.ChangePasswordActivity">
+    tools:context=".authentication.login.view.EmailInputActivity">
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageBack"
         android:layout_width="@dimen/_30sdp"
@@ -14,6 +14,7 @@
         android:background="@drawable/background_icon"
         android:padding="@dimen/_6sdp"
         android:src="@drawable/ic_back"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:tint="@color/md_theme_light_onSurfaceVariant"/>
@@ -40,21 +41,18 @@
             <ImageView
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
-                android:background="@drawable/ic_change_pass"
+                android:background="@drawable/ic_email"
                 android:backgroundTint="@color/md_theme_dark_inverseSurface"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/change_password"
+                android:text="@string/email_input"
                 android:textColor="@color/md_theme_light_onSurfaceVariant"
                 android:textSize="@dimen/_18sdp"
                 android:textStyle="bold" />
-
             <TextView
-                android:id="@+id/notice"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/input_email_content"
@@ -64,53 +62,19 @@
 
 
             <EditText
-                android:id="@+id/inputCurrentPass"
+                android:id="@+id/inputEmail"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_70sdp"
                 android:background="@drawable/background_input"
-                android:hint="@string/current_password"
+                android:hint="@string/email"
                 android:imeOptions="actionNext"
                 android:importantForAutofill="no"
-                android:inputType="textPassword"
+                android:inputType="textEmailAddress"
                 android:paddingStart="@dimen/_16sdp"
                 android:paddingEnd="@dimen/_16sdp"
                 android:textColor="@color/md_theme_light_onSurfaceVariant"
-                android:textSize="@dimen/_13ssp"
-                android:drawableEnd="@drawable/ic_remove_red_eye"/>
-
-
-            <EditText
-                android:id="@+id/inputNewPassword"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:background="@drawable/background_input"
-                android:hint="@string/new_password"
-                android:imeOptions="actionNext"
-                android:importantForAutofill="no"
-                android:inputType="textPassword"
-                android:paddingStart="@dimen/_16sdp"
-                android:paddingEnd="@dimen/_16sdp"
-                android:textColor="@color/md_theme_light_onSurfaceVariant"
-                android:textSize="@dimen/_13ssp"
-                android:drawableEnd="@drawable/ic_remove_red_eye"/>
-
-            <EditText
-                android:id="@+id/inputConfirmPassword"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:background="@drawable/background_input"
-                android:hint="@string/confirm_new_password"
-                android:imeOptions="actionDone"
-                android:importantForAutofill="no"
-                android:inputType="textPassword"
-                android:paddingStart="@dimen/_16sdp"
-                android:paddingEnd="@dimen/_16sdp"
-                android:textColor="@color/md_theme_light_onSurfaceVariant"
-                android:textSize="@dimen/_13ssp"
-                android:drawableEnd="@drawable/ic_remove_red_eye"/>
+                android:textSize="@dimen/_13ssp" />
             <TextView
                 android:id="@+id/status"
                 android:visibility="invisible"
@@ -122,21 +86,33 @@
                 android:textColor="@color/md_theme_light_error"
                 android:textSize="@dimen/_12sdp" />
 
+            <TextView
+                android:id="@+id/resendText"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_50sdp"
+                android:text="@string/resent_content"
+                android:textAlignment="center"
+                android:textColor="@color/rippleDark"
+                android:textSize="@dimen/_12sdp" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/_50sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:animateLayoutChanges="true">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonChangePass"
+                    android:id="@+id/buttonOK"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_50sdp"
                     android:text="Xác nhận"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_13ssp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:enabled="false"/>
+
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -145,6 +121,16 @@
                     android:layout_gravity="center"
                     android:visibility="invisible" />
             </FrameLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonOKAfterChange"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:text="Xác nhận đã đổi"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/name_pri"
+                android:visibility="invisible"/>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

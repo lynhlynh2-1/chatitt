@@ -3,8 +3,10 @@ package com.example.chatitt.profile.view;
 import static com.example.chatitt.ultilities.Helpers.showToast;
 
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -25,6 +27,9 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
     private String currPass = null;
     private String newPass = null;
     private ChangePassPresenter changePassPresenter;
+    private Boolean isHidePassEdt = true;
+
+    private String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +39,11 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
 
         preferenceManager = new PreferenceManager(getApplicationContext());
         changePassPresenter = new ChangePassPresenter(this, preferenceManager, getApplicationContext());
+
+
+        if (getIntent().getStringExtra(Constants.KEY_EMAIL)!= null){
+            email = getIntent().getStringExtra(Constants.KEY_EMAIL);
+        }else email = preferenceManager.getString(Constants.KEY_EMAIL);
 
         getCurrPass();
         setListener();
@@ -139,12 +149,13 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
         }
 
     }
-    private void loading(boolean isLoading) {
-        if(isLoading){
-            binding.progressBar.setVisibility(View.VISIBLE);
-        } else {
-            binding.progressBar.setVisibility(View.INVISIBLE);
+    public void loading(boolean b) {
+        if (b){
+            binding.status.setVisibility(View.INVISIBLE);
         }
+        binding.progressBar.setVisibility(b? View.VISIBLE : View.GONE);
+        binding.buttonChangePass.setVisibility(b? View.GONE : View.VISIBLE);
+
     }
     private void setListener(){
         binding.imageBack.setOnClickListener(v -> onBackPressed());
@@ -152,23 +163,115 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
             if (isValidPassDetails()){
                 binding.buttonChangePass.setVisibility(View.GONE);
                 loading(true);
-                newPass = binding.inputNewPassword.getText().toString().trim();
-                currPass = binding.inputCurrentPass.getText().toString().trim();
+                String newPass = binding.inputNewPassword.getText().toString().trim();
+                String currPass = binding.inputCurrentPass.getText().toString().trim();
                 changePassPresenter.changePass(currPass,newPass);
+            }
+        });
+        binding.inputCurrentPass.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (binding.inputCurrentPass.getRight() - binding.inputCurrentPass.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // your action here
+                        if(isHidePassEdt){
+                            binding.inputCurrentPass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                            binding.inputCurrentPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red, 0);
+                            isHidePassEdt = false;
+                        }else {
+                            binding.inputCurrentPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                            binding.inputCurrentPass.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_remove_red_eye, 0);
+                            isHidePassEdt = true;
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+        binding.inputNewPassword.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (binding.inputNewPassword.getRight() - binding.inputNewPassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // your action here
+                        if(isHidePassEdt){
+                            binding.inputNewPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                            binding.inputNewPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red, 0);
+                            isHidePassEdt = false;
+                        }else {
+                            binding.inputNewPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                            binding.inputNewPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_remove_red_eye, 0);
+                            isHidePassEdt = true;
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+        binding.inputConfirmPassword.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (binding.inputConfirmPassword.getRight() - binding.inputConfirmPassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // your action here
+                        if(isHidePassEdt){
+                            binding.inputConfirmPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                            binding.inputConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.red, 0);
+                            isHidePassEdt = false;
+                        }else {
+                            binding.inputConfirmPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                            binding.inputConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_remove_red_eye, 0);
+                            isHidePassEdt = true;
+                        }
+                        return true;
+                    }
+                }
+                return false;
             }
         });
     }
 
     @Override
     public void onChangePassSuccess() {
-        binding.buttonChangePass.setVisibility(View.VISIBLE);
-        showToast(getApplicationContext(),"Thay đổi mật khẩu thành công");
+        loading(false);
+        showToast(getApplicationContext(),"Thay đổi mật khẩu thành công.");
         onBackPressed();
     }
 
     @Override
+    public void onCurrentPassWrong() {
+        loading(false);
+        binding.inputNewPassword.getText().clear();
+        binding.inputConfirmPassword.getText().clear();
+        binding.inputCurrentPass.getText().clear();
+        binding.status.setVisibility(View.VISIBLE);
+        binding.status.setText("Mật khẩu hiện tại không đúng!");
+    }
+
+    @Override
     public void onChangePassError() {
-        binding.buttonChangePass.setVisibility(View.VISIBLE);
-        showToast(getApplicationContext(),"Thay đổi mật khẩu thất bại! Hãy thử lại.");
+        loading(false);
+        binding.inputNewPassword.getText().clear();
+        binding.inputConfirmPassword.getText().clear();
+        binding.inputCurrentPass.getText().clear();
+        binding.status.setVisibility(View.VISIBLE);
+        binding.status.setText("Thay đổi mật khẩu thất bại! Hãy thử lại.");
     }
 }

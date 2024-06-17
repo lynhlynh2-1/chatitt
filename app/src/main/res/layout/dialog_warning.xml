@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/container_ic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/_4sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="@dimen/_48sdp"
+            android:src="@drawable/ic_warning"
+            app:tint="@color/md_theme_dark_errorContainer"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:text="Xác nhận"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/md_theme_dark_errorContainer"
+            android:textSize="@dimen/_18ssp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:textSize="@dimen/_13ssp"
+        android:layout_marginStart="@dimen/_21sdp"
+        android:layout_marginBottom="@dimen/_11sdp"
+        android:layout_marginEnd="@dimen/_21sdp"
+        android:text="Bạn có chắc chắn muốn thay đổi địa chỉ Email?"
+        android:textColor="@android:color/black" />
+
+
+    <LinearLayout
+        android:id="@+id/container_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/_4sdp">
+
+        <Button
+            android:id="@+id/btn_Cancel"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:backgroundTint="@color/red"
+            android:textSize="@dimen/_10ssp"
+            android:text="Cancel"
+            />
+        <Button
+            android:id="@+id/btn_OK"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:textSize="@dimen/_10ssp"
+            android:text="OK"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>

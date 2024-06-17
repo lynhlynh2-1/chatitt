@@ -38,7 +38,7 @@
             android:background="@color/md_theme_light_background"
             android:hint="@string/email"
             android:textStyle="bold"
-            android:inputType="phone"
+            android:inputType="textEmailAddress"
             android:textSize="@dimen/_12ssp" />
 
     </LinearLayout>

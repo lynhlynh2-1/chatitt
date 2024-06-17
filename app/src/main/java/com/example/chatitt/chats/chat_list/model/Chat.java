@@ -1,8 +1,13 @@
 package com.example.chatitt.chats.chat_list.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
-public class Chat {
+public class Chat implements Parcelable {
     private String id;
     private String name;
     private List<String> member;
@@ -102,5 +107,15 @@ public class Chat {
 
     public void setOnline(String online) {
         this.online = online;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+
     }
 }

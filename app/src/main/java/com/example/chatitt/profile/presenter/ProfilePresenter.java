@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.ultilities.Constants;
@@ -13,13 +14,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +72,7 @@ public class ProfilePresenter {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        userModel.setUsername(username);
+                        userModel.setName(username);
                         viewInterface.onEditProfileSuccess(Constants.KEY_NAME);
                     }
                 })
@@ -100,51 +102,38 @@ public class ProfilePresenter {
                     }
                 });
     }
-    private boolean is = false;
-    public boolean isLoginAgainSuccessfully(String email, String pass){
-
-        auth.signInWithEmailAndPassword(email,pass)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        is = true;
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        is = false;
-                    }
-                });
-        return is;
-    }
     public void updateEmail(String email) {
-        user.update(Constants.KEY_EMAIL,email)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        FirebaseUser user = auth.getCurrentUser();
-                        if(user!= null){
-                            user.updateEmail(email)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
+
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser!= null){
+            currentUser.updateEmail(email)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                user.update(Constants.KEY_EMAIL,email)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
                                                 userModel.setEmail(email);
                                                 viewInterface.onEditProfileSuccess(Constants.KEY_EMAIL);
                                             }
-                                        }
-                                    });
-                        }else viewInterface.onEditProfileError();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                        viewInterface.onEditProfileError();
-                    }
-                });
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Update email fail to firestore ", e);
+                                                viewInterface.onEditProfileError();
+                                            }
+                                        });
+
+                            }else {
+                                Log.w(TAG, "Update email fail to fireAuth " + task.getException());
+                                viewInterface.onEditProfileError();
+                            }
+                        }
+                    });
+        }else viewInterface.onEditProfileError();
 
     }
 
@@ -231,15 +220,22 @@ public class ProfilePresenter {
     }
 
     public void getProfile() {
-        DocumentReference docRef = db.collection("users").document(preferenceManager.getString(Constants.KEY_USED_ID));
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+        DocumentReference docRef = db.collection("users")
+                .document(preferenceManager.getString(Constants.KEY_USED_ID));
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot document, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    viewInterface.onGetProfileError();
+                    return;
+                }
+
+                if (document != null && document.exists()) {
+                    Log.d(TAG, "User info data: " + document.getData());
                     userModel.setAvatar(document.getString(Constants.KEY_AVATAR));
                     userModel.setCoverImage(document.getString(Constants.KEY_COVERIMAGE));
-                    userModel.setUsername(document.getString(Constants.KEY_NAME));
+                    userModel.setName(document.getString(Constants.KEY_NAME));
                     userModel.setBirthday(document.getString(Constants.KEY_BIRTHDAY));
                     userModel.setGender(document.getString(Constants.KEY_GENDER));
                     userModel.setEmail(document.getString(Constants.KEY_EMAIL));
@@ -249,11 +245,9 @@ public class ProfilePresenter {
                     userModel.setCity(document.getString(Constants.KEY_ADDRESS_CITY));
                     viewInterface.onGetProfileSuccess();
                 } else {
-                    Log.d(TAG, "No such document");
+                    Log.d(TAG, "Current data: null");
+                    viewInterface.onGetProfileError();
                 }
-            } else {
-                Log.d(TAG, "get failed with ", task.getException());
-
             }
         });
     }

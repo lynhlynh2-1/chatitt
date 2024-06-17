@@ -2,17 +2,18 @@ package com.example.chatitt.authentication.model;
 
 import android.util.Patterns;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class User {
-    private String email, phonenumber,  password, re_password, avatar, username, id, coverImage, online, address, country, city, gender, birthday;
+public class User implements Serializable {
+    private String email, phonenumber,  password, re_password, avatar, name, id, coverImage, online, address, country, city, gender, birthday;
 
-    public User(String email, String password, String re_password, String avatar, String username) {
+    public User(String email, String password, String re_password, String avatar, String name) {
         this.email = email;
         this.password = password;
         this.re_password = re_password;
         this.avatar = avatar;
-        this.username = username;
+        this.name = name;
     }
 
     public User(String email, String password) {
@@ -20,6 +21,10 @@ public class User {
         this.password = password;
     }
     public User() {
+    }
+
+    public User(String email) {
+        this.email = email;
     }
 
     public String getPhonenumber() {
@@ -69,12 +74,12 @@ public class User {
         this.avatar = avatar;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getRe_password() {
@@ -146,5 +151,6 @@ public class User {
     public Boolean isValidPhone(){
         return Patterns.PHONE.matcher(phonenumber).matches() && phonenumber.startsWith("0") && phonenumber.length()!=10;
     }
+
 
 }

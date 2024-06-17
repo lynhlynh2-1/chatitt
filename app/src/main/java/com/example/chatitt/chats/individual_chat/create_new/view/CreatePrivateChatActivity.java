@@ -1,8 +1,10 @@
 package com.example.chatitt.chats.individual_chat.create_new.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,9 +12,11 @@ import android.widget.SearchView;
 
 import com.example.chatitt.R;
 import com.example.chatitt.authentication.model.User;
+import com.example.chatitt.chats.chat.view.ChatActivity;
 import com.example.chatitt.chats.individual_chat.create_new.presenter.CreateChatPrivateContract;
 import com.example.chatitt.chats.individual_chat.create_new.presenter.CreateChatPrivatePresenter;
 import com.example.chatitt.databinding.ActivityCreatePrivateChatBinding;
+import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
 
@@ -101,32 +105,93 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
 
     @Override
     public void onUserClicked(User userModel) {
+        binding.loading.setVisibility(View.VISIBLE);
+        createChatPrivatePresenter.findChat(userModel);
+    }
 
+    @Override
+    public void onFindChatSucces() {
+        binding.loading.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra(Constants.KEY_COLLECTION_CHAT, createChatPrivatePresenter.getChat());
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onFindChatError() {
+        binding.loading.setVisibility(View.VISIBLE);
+        Helpers.showToast(getApplicationContext(),"Xảy ra lỗi, vui lòng kiểm tra kết nối mạng và thử lại!!");
+    }
+
+    @Override
+    public void onChatNotExist(User user) {
+        binding.loading.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra(Constants.KEY_USER, user);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public void onSearchUserError() {
-
+        binding.shimmerEffect.stopShimmerAnimation();
+        binding.shimmerEffect.setVisibility(View.GONE);
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setText("Tìm kiếm gặp lỗi");
+        int colorEror = ContextCompat.getColor(getApplicationContext(), R.color.md_theme_light_error);
+        binding.textErrorMessage.setTextColor(colorEror);
     }
 
     @Override
     public void onSearchUserSuccess() {
+        binding.swipeLayout.setRefreshing(false);
 
+        List<User> list = createChatPrivatePresenter.getUserModelList();
+        binding.shimmerEffect.stopShimmerAnimation();
+        binding.shimmerEffect.setVisibility(View.GONE);
+        if (list.size() != 0){
+            adapter.reset(list);
+            binding.usersRecyclerView.setVisibility(View.VISIBLE);
+        }else {
+            binding.textErrorMessage.setVisibility(View.VISIBLE);
+            binding.textErrorMessage.setText("Không tìm thấy dữ liệu!");
+        }
     }
 
     @Override
     public void onGetListFriendError() {
-
+        binding.shimmerEffect.stopShimmerAnimation();
+        binding.shimmerEffect.setVisibility(View.GONE);
+        binding.swipeLayout.setRefreshing(false);
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setText("Tải danh sách bạn bè gặp lỗi");
+        int colorEror = ContextCompat.getColor(getApplicationContext(), R.color.md_theme_light_error);
+        binding.textErrorMessage.setTextColor(colorEror);
     }
 
     @Override
     public void onGetListFriendSuccess() {
-
+        userModelList = createChatPrivatePresenter.getUserModelList();
+        binding.shimmerEffect.stopShimmerAnimation();
+        binding.shimmerEffect.setVisibility(View.GONE);
+        if (userModelList.size() != 0){
+            adapter.reset(userModelList);
+            binding.usersRecyclerView.setVisibility(View.VISIBLE);
+        }else {
+            binding.textErrorMessage.setVisibility(View.VISIBLE);
+            binding.textErrorMessage.setText("Danh sách bạn bè trống!");
+        }
     }
 
     @Override
     public void onNoUser() {
-
+        binding.shimmerEffect.stopShimmerAnimation();
+        binding.shimmerEffect.setVisibility(View.GONE);
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setText("Không tìm thấy dữ liệu!");
+        int colorEror = ContextCompat.getColor(getApplicationContext(), R.color.md_theme_light_onSurfaceVariant);
+        binding.textErrorMessage.setTextColor(colorEror);
     }
 
     @Override
