@@ -6,5 +6,6 @@ public class LogInContract {
         void onLoginSuccess();
         void onLoginWrongEmailOrPassword();
 
+        void onConnectFail();
     }
 }

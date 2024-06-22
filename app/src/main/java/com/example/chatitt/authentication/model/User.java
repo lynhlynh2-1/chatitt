@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class User implements Serializable {
     private String email, phonenumber,  password, re_password, avatar, name, id, coverImage, online, address, country, city, gender, birthday;
-
+    private Boolean checked = false;
     public User(String email, String password, String re_password, String avatar, String name) {
         this.email = email;
         this.password = password;
@@ -21,6 +21,14 @@ public class User implements Serializable {
         this.password = password;
     }
     public User() {
+    }
+
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
     }
 
     public User(String email) {

@@ -23,7 +23,7 @@ public class ChatListContract {
 
         void isAddedChat();
 
-        void updateChatRealtime();
+        void updateChatRealtime(int count);
 
         void onNewMemberAdded();
     }

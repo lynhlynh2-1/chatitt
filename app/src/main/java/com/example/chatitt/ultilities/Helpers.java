@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.chats.chat_list.model.Chat;
+import com.example.chatitt.chats.chat_list.model.Message;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -23,6 +24,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import javax.crypto.SecretKey;
 
 public class Helpers {
     public static void showToast(Context context, String msg){
@@ -171,6 +174,39 @@ public class Helpers {
         }
 //        }
 
+    }
+
+    public static List<Message> checkStringMessageContain(String searchStr, List<Message> messageList){
+        List<Message> result = new ArrayList<>();
+        for (Message u : messageList){
+            String content = u.getContent();
+
+            if (content.contains(searchStr.toLowerCase())){
+                result.add(u);
+            }
+        }
+        return result;
+    }
+
+    public static String getNow() {
+        Date date = new Date();
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        return outputFormat.format(date);
+    }
+    public static String encodeSentImage(Bitmap bitmap){
+        int previewWidth = bitmap.getWidth();
+        int previewHeight = bitmap.getHeight();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return Base64.getEncoder().encodeToString(bytes);
+        }else{
+            return null;
+        }
     }
     public static Boolean isValidPhone(String phonenumber){
         return Patterns.PHONE.matcher(phonenumber).matches() && phonenumber.startsWith("0") && phonenumber.length()==10;

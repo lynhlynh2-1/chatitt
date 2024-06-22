@@ -62,17 +62,46 @@ public class NewEmailVerificationActivity extends AppCompatActivity {
         checkEnableOK();
         setListener();
         mAuth.addAuthStateListener(mAuthListener);
-//        final Handler handler = new Handler();
-//        final int delay = 1000; // 1000 milliseconds == 1 second
-//
-//        handler.postDelayed(new Runnable() {
-//            public void run() {
-//                System.out.println("myHandler: here!"); // Do your work here
-//                handler.postDelayed(this, delay);
-//            }
-//        }, delay);
+        handler.postDelayed(myRunable, delay);
+//        check();
     }
+    final Handler handler = new Handler();
+    final int delay = 1000; // 1000 milliseconds == 1 second
+    final Runnable myRunable = new Runnable() {
+        @Override
+        public void run() {
+            System.out.println("myHandler: here!");
+            doMyWork();
+            handler.postDelayed(this, delay);
+        }
+    };
+    private void doMyWork(){
+        if (mAuth.getCurrentUser() == null){
+            // User is signed out
+            loading(true);
+            Log.d("LOG_Login", "onAuthStateChanged:signed_out");
 
+            preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString().trim());
+            db.collection(Constants.KEY_COLLECTION_USERS).document(preferenceManager.getString(Constants.KEY_USED_ID))
+                    .update(Constants.KEY_EMAIL, binding.inputEmail.getText().toString().trim())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                loading(false);
+                                Helpers.showToast(getApplicationContext(), "Cập nhật email thành công!");
+                                handler.removeCallbacks(myRunable);
+                                finish();
+                            }else {
+                                loading(false);
+                                Helpers.showToast(getApplicationContext(), "Lỗi mạng! Cập nhật email thất bại đến Firestore, dù đã update trên Auth!");
+                            }
+                        }
+                    });
+        }else {
+            mAuth.getCurrentUser().reload();
+        }
+    }
 
     private void checkEnableOK(){
         binding.inputEmail.addTextChangedListener(new TextWatcher() {
@@ -134,8 +163,13 @@ public class NewEmailVerificationActivity extends AppCompatActivity {
 //    final int delay = 1000; // 1000 milliseconds == 1 second
 //    Runnable runnable = () -> check();
 //    private void check (){
-//
-//        mAuth.getCurrentUser().reload().addOnSuccessListener(new OnSuccessListener<Void>() {
+//        if (mAuth.getCurrentUser() == null){
+//            System.out.println("user: null!");
+//        }else {
+//            System.out.println("user: NOT null");
+//        }
+//        mAuth.getCurrentUser().reload();
+//        .addOnSuccessListener(new OnSuccessListener<Void>() {
 //            @Override
 //            public void onSuccess(Void unused) {
 //                if(Objects.equals(mAuth.getCurrentUser().getEmail(), binding.inputEmail.getText().toString().trim())){

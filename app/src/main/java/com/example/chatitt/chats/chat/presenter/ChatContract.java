@@ -5,7 +5,7 @@ import com.example.chatitt.chats.chat_list.model.Chat;
 public class ChatContract {
     public interface ViewInterface{
         void onChatNotExist();
-        void onFindChatSucces();
+        void onUpdateInforSuccess(String name, String avatar, Boolean online);
         void onGetMessagesSuccess();
         void onGetMessagesError();
 
@@ -28,5 +28,7 @@ public class ChatContract {
         void updateChatRealtime(String chatId, String name, String avatar);
 
         void onInfoChatChanged(Chat chat);
+
+        void updateMessList(int count);
     }
 }

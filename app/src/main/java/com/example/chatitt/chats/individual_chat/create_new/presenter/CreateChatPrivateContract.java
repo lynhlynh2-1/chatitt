@@ -22,7 +22,7 @@ public class CreateChatPrivateContract {
         void onDelFriendError();
 
         void onDelFriendSuccess();
-        void onFindChatSucces();
+        void onFindChatSucces(String id);
         void onFindChatError();
         void onChatNotExist(User user);
 

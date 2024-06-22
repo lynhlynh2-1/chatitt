@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatitt.chats.chat_list.model.Chat;
+import com.example.chatitt.chats.chat_list.model.Message;
 import com.example.chatitt.chats.chat_list.presenter.ChatListContract;
 import com.example.chatitt.databinding.ItemContainerRecentConversionBinding;
 import com.example.chatitt.ultilities.Constants;
@@ -23,11 +24,11 @@ import java.util.Objects;
 import javax.crypto.SecretKey;
 
 public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConversationsAdapter.ConversiongViewHolder>{
-    private List<Chat> chatMessages;
+    private List<Chat> chatList;
     private final ChatListContract.ViewInterface conversionListener;
     private PreferenceManager preferenceManager;
-    public RecentConversationsAdapter(List<Chat> chatMessages, ChatListContract.ViewInterface conversionListener, PreferenceManager preferenceManager) {
-        this.chatMessages = chatMessages;
+    public RecentConversationsAdapter(List<Chat> chatList, ChatListContract.ViewInterface conversionListener, PreferenceManager preferenceManager) {
+        this.chatList = chatList;
         this.conversionListener = conversionListener;
         this.preferenceManager = preferenceManager;
     }
@@ -46,16 +47,16 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
 
     @Override
     public void onBindViewHolder(@NonNull RecentConversationsAdapter.ConversiongViewHolder holder, int position) {
-        holder.setData(chatMessages.get(position));
+        holder.setData(chatList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return chatMessages.size();
+        return chatList.size();
     }
 
     public void reset(List<Chat> conversations) {
-        chatMessages = conversations;
+        chatList = conversations;
         notifyDataSetChanged();
     }
 
@@ -68,40 +69,35 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
             binding = itemContainerRecentConversionBinding;
         }
 
-        void setData(Chat chatMessage) {
-            if (Objects.equals(chatMessage.getOnline(), "1")){
+        void setData(Chat chat) {
+            if (Objects.equals(chat.getOnline(), "1")){
                 binding.imageStatus.setColorFilter(Color.rgb(0,255,0));
             }else {
                 binding.imageStatus.setColorFilter(Color.rgb(255,165,0));
             }
-
-            SecretKey secretKey;
-
             String content;
-            String sender = chatMessage.getLastMessage().getUser().getName();
-
+            String sender = chat.getSenderName();
             if (Objects.equals(sender, preferenceManager.getString(Constants.KEY_NAME))) sender = "Bạn";
-            if (Objects.equals(chatMessage.getLastMessage().getType(), Constants.KEY_TYPE_IMAGE)){
-
+            if (Objects.equals(chat.getType_msg(), Constants.KEY_TYPE_IMAGE)){
                 content = sender + ": Hình ảnh";
-
             }else {
-                content = sender + ": " + chatMessage.getLastMessage().getContent();
+                content = sender + ": " + chat.getLastMessage();
             }
 
-            binding.imageProfile.setImageBitmap(getConversionImage(chatMessage.getAvatar()));
-            binding.textName.setText(chatMessage.getName());
+            if (chat.getAvatar() != null){
+                binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(chat.getAvatar()));
+            }
+            if (chat.getName() != null){
+                binding.textName.setText(chat.getName());
+            }
+
             binding.textRecentMessage.setText(content);
-            binding.textTime.setText(Helpers.formatTime(chatMessage.getLastMessage().getUpdatedAt(),false));
+            binding.textTime.setText(Helpers.formatTime(chat.getTimestamp(),false));
 
             binding.getRoot().setOnClickListener(view -> {
-                conversionListener.onConversionClicked(chatMessage);
+                conversionListener.onConversionClicked(chat);
             });
         }
     }
 
-    private Bitmap getConversionImage(String encodedImage){
-        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes,0, bytes.length);
-    }
 }

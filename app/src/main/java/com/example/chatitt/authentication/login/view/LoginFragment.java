@@ -216,4 +216,11 @@ public class LoginFragment extends Fragment implements LogInContract.ViewInterfa
         binding.status.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onConnectFail() {
+        binding.login.setVisibility(View.VISIBLE);
+        binding.loading.setVisibility(View.GONE);
+        binding.status.setText("Mất kết nổi mạng! Vui lòng kiểm tra lại!");
+        binding.status.setVisibility(View.VISIBLE);
+    }
 }

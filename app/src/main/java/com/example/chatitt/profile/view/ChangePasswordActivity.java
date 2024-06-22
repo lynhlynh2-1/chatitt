@@ -131,11 +131,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
             binding.inputNewPassword.setHintTextColor(colorEror);
             showToast(getApplicationContext(),"Mật khẩu mới không được giống với mật khẩu cũ");
             return false;
-        }else if (!binding.inputCurrentPass.getText().toString().equals(currPass)) {
-            binding.inputCurrentPass.setBackgroundResource(R.drawable.background_input_wrong);
-            binding.inputCurrentPass.setHintTextColor(colorEror);
-            showToast(getApplicationContext(),"Mật khẩu hiện tại không chính xác");
-            return false;
         }else if(binding.inputNewPassword.getText().toString().length() < 6){
             binding.inputNewPassword.setBackgroundResource(R.drawable.background_input_wrong);
             binding.inputNewPassword.setHintTextColor(colorEror);

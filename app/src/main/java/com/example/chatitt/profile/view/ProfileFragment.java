@@ -349,7 +349,7 @@ public class ProfileFragment extends Fragment implements ProfileContract.ViewInt
                     @Override
                     public void onClick(View v) {
                         String newName = editTextName.getText().toString().trim();
-                        if (!newName.isEmpty() && Patterns.DOMAIN_NAME.matcher(editTextName.getText().toString()).matches()) {
+                        if (!newName.isEmpty() && !Patterns.DOMAIN_NAME.matcher(editTextName.getText().toString()).matches()) {
                             // Thay đổi tên người dùng thành newName ở đây
                             profilePresenter.updateUsername(newName);
                             alertDialog.dismiss();

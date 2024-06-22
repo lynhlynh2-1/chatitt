@@ -35,6 +35,7 @@ public class Constants {
     public static final String MESS_SENDER_ID = "messSenderId";
     public static final String MESS_RECEIVER_ID = "messReceiverId";
     public static final String KEY_MESSAGE = "message";
+    public static final String KEY_COLLECTION_MESSAGE = "messages";
     public static final String KEY_TIMESTAMP = "timestamp";
     public static final String isSeen = "isSeen";
     public static final String KEY_COLLECTION_CONVERSATIONS = "chats";
@@ -45,26 +46,26 @@ public class Constants {
     public static final String KEY_SENDER_IMAGE = "senderImage";
     public static final String KEY_RECEIVER_IMAGE = "receiverImage";
     public static final String KEY_LAST_MESSAGE = "lastMessage";
-    public static final String KEY_AVAILABILITY = "availability";
+    public static final String KEY_ONLINE = "online";
     public static final String REMOTE_MSG_AUTHORIZATION = "Authorization";
     public static final String REMOTE_MSG_CONTENT_TYPE = "Content-type";
 
     public static final String REMOTE_MSG_DATA = "data";
     public static final String TYPE_MESSAGES_SEND = "type";
+    public static final String KEY_TYPE = "type";
 //    public static final List<UserGroup> userGroups = new ArrayList<>();
 //    public static final UserGroup userCurrent = new UserGroup();
     public static final String REMOTE_MSG_REGISTRATION_IDS = "registration_ids";
     public static final String FRIEND_LIST = "friend_list";
     public static final String MY_REQ_FRIEND_LIST = "friend_list";
     public static final String OTHER_REQ_FRIEND_LIST = "friend_list";
+    public static final String KEY_CONTENT = "content";
+    public static final String KEY_TYPE_CHAT = "type_chat";
+    public static final String KEY_TYPE_MSG = "type_msg";
+    public static final String KEY_ID = "id";
 
     public static HashMap<String, String> remotoMsgHeaders = null;
 
-    public static final String KEY_PUBLIC_KEY = "publicKey";
-    public static final String KEY_RECEIVER_PUBLIC_KEY = "receiverPublicKey";
-    public static final String KEY_SENDER_PUBLIC_KEY = "senderPublicKey";
-
-    public static final String KEY_PRIVATE_KEY = "privateKey";
     public static final String KEY_PRIVATE_CHAT = "PRIVATE_CHAT";
     public static final String KEY_GROUP_CHAT = "GROUP_CHAT";
     public static final String KEY_TYPE_TEXT = "TEXT";

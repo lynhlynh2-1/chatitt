@@ -1,60 +1,58 @@
 package com.example.chatitt.chats.chat_list.model;
 
 import com.example.chatitt.authentication.model.User;
+import com.google.firebase.Timestamp;
 
 import java.io.Serializable;
 
 public class Message implements Serializable {
 
-    private String id;
+//    private String id;
     private String chat;
-    private Chat chatObject;
-    private User user;
+    private String senderId;
+    private String senderImage;
+    private String senderName;
     private String content;
-    private String type;
-    private String createdAt;
-    private String updatedAt;
+    private String type_msg;
+    private String type_chat;
+    private String timestamp;
     private String isSending = "2";
     //2: đã gửi, 1: đang gửi: 0: gửi thất bại
 
-    public Message(String chat, User user, String content, String type, String updatedAt , String isSending) {
+    public Message(){
+    }
+    public Message(String chat, User user, String content, String type_msg, String timestamp , String isSending) {
         this.chat = chat;
-        this.user = user;
         this.content = content;
-        this.type = type;
-        this.updatedAt = updatedAt;
+        this.type_msg = type_msg;
+        this.timestamp = timestamp;
         this.isSending = isSending;
     }
-    public Message(User user, String content, String type, String updatedAt , String isSending) {
+    public Message(String senderId,String senderName, String senderImage, String content, String type, String timestamp , String isSending) {
         this.content = content;
-        this.type = type;
-        this.updatedAt = updatedAt;
+        this.type_msg = type;
+        this.timestamp = timestamp;
         this.isSending = isSending;
-        this.user = user;
-    }
-    public String isSending() {
-        return isSending;
-    }
-
-    public void setSending(String sending) {
-        isSending = sending;
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.senderImage = senderImage;
     }
 
-    public Chat getChatObject() {
-        return chatObject;
+    public String getType_chat() {
+        return type_chat;
     }
 
-    public void setChatObject(Chat chatObject) {
-        this.chatObject = chatObject;
+    public void setType_chat(String type_chat) {
+        this.type_chat = type_chat;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public String getId() {
+//        return id;
+//    }
+//
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     public String getChat() {
         return chat;
@@ -64,12 +62,28 @@ public class Message implements Serializable {
         this.chat = chat;
     }
 
-    public User getUser() {
-        return user;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getSenderImage() {
+        return senderImage;
+    }
+
+    public void setSenderImage(String senderImage) {
+        this.senderImage = senderImage;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 
     public String getContent() {
@@ -80,28 +94,27 @@ public class Message implements Serializable {
         this.content = content;
     }
 
-    public String getType() {
-        return type;
+    public String getType_msg() {
+        return type_msg;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType_msg(String type_msg) {
+        this.type_msg = type_msg;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public String getUpdatedAt() {
-        return updatedAt;
+    public String getIsSending() {
+        return isSending;
     }
 
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setIsSending(String isSending) {
+        this.isSending = isSending;
     }
-
 }

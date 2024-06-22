@@ -38,7 +38,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:fontFamily="@font/montserrat_bold"
-                    android:text="Han Pham"
+                    android:text="Linh Pham"
                     android:textAlignment="center"
                     android:textColor="@color/md_theme_light_onSurfaceVariant"
                     android:textSize="@dimen/_18ssp" />
@@ -57,7 +57,7 @@
                     android:layout_gravity="bottom"
                     android:layout_margin="@dimen/_5sdp"
                     android:fontFamily="@font/montserrat"
-                    android:text="Quét mã để thêm bạn Chat Them\n với tôi"
+                    android:text="Quét mã để thêm bạn Chat IT\n với tôi"
                     android:textAlignment="center"
                     android:textColor="@color/md_theme_light_onSurfaceVariant"
                     android:textSize="@dimen/_10ssp"

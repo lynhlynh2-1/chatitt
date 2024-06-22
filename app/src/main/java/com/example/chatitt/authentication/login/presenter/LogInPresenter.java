@@ -1,7 +1,10 @@
 package com.example.chatitt.authentication.login.presenter;
 
+import static com.example.chatitt.ultilities.Constants.TAG;
+
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -65,6 +68,8 @@ public class LogInPresenter {
                                         }
                                     });
                         }else {
+                            if (task1.getException() != null)
+                                Log.d(TAG, task1.getException().toString());
                             viewInterface.onLoginWrongEmailOrPassword();
                         }
 

@@ -110,10 +110,13 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
     }
 
     @Override
-    public void onFindChatSucces() {
+    public void onFindChatSucces(String id) {
         binding.loading.setVisibility(View.VISIBLE);
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra(Constants.KEY_COLLECTION_CHAT, createChatPrivatePresenter.getChat());
+        intent.putExtra(Constants.KEY_RECEIVER_ID, id);
+        intent.putExtra(Constants.KEY_RECEIVER_IMAGE, id);
+        intent.putExtra(Constants.KEY_RECEIVER_NAME, id);
         startActivity(intent);
         finish();
     }

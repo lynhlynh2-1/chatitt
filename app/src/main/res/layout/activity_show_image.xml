@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.jsibbold.zoomage.ZoomageView
+        android:id="@+id/myZoomageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/rectangle1"
+        app:zoomage_restrictBounds="false"
+        app:zoomage_animateOnReset="true"
+        app:zoomage_autoResetMode="UNDER"
+        app:zoomage_autoCenter="true"
+        app:zoomage_zoomable="true"
+        app:zoomage_translatable="true"
+        app:zoomage_minScale="0.6"
+        app:zoomage_maxScale="8"
+        />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/actionDown"
+        android:layout_width="@dimen/_22sdp"
+        android:layout_height="@dimen/_22sdp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_toStartOf="@+id/exit_img"
+        android:src="@drawable/round_download_24"
+        app:tint="@color/name_pri"
+        android:background="@color/ic_banner_background"
+        app:shapeAppearanceOverlay="@style/circular"
+        />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/exit_img"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:padding="@dimen/_4sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:src="@drawable/round_cancel"
+        app:shapeAppearanceOverlay="@style/circular"
+        android:layout_alignParentEnd="true"
+        app:tint="@color/name_pri"
+        android:background="@color/bg_main"/>
+</RelativeLayout>

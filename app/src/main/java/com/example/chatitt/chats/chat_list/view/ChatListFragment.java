@@ -18,16 +18,20 @@ import android.widget.SearchView;
 
 import com.example.chatitt.R;
 import com.example.chatitt.authentication.model.User;
+import com.example.chatitt.chats.chat.view.ChatActivity;
 import com.example.chatitt.chats.chat_list.model.Chat;
 import com.example.chatitt.chats.chat_list.presenter.ChatListContract;
 import com.example.chatitt.chats.chat_list.presenter.ChatListPresenter;
+import com.example.chatitt.chats.group_chat.create_new.view.CreateGroupChatActivity;
 import com.example.chatitt.chats.individual_chat.create_new.view.CreatePrivateChatActivity;
 import com.example.chatitt.databinding.FragmentChatListBinding;
+import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatListFragment extends Fragment implements ChatListContract.ViewInterface {
     private boolean isExpanded = false;
@@ -42,6 +46,7 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
     private Animation toBottomBgAnim;
     private List<Chat> conversations;
     private RecentConversationsAdapter conversationsAdapter;
+    private List<Chat> chatList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,8 +100,8 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
             }
         });
         binding.galleryFabBtn.setOnClickListener(v->{
-//            Intent it = new Intent(requireContext(), CreateGroupChatActivity.class);
-//            startActivity(it);
+            Intent it = new Intent(requireContext(), CreateGroupChatActivity.class);
+            startActivity(it);
         });
 
         binding.shareFabBtn.setOnClickListener(v->{
@@ -108,6 +113,7 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
         binding.swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                chatsPresenter.resetChatList();
                 chatsPresenter.getMessaged();
             }
         });
@@ -175,7 +181,14 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
 
     @Override
     public void onConversionClicked(Chat chat) {
-
+        Intent it = new Intent(requireContext(), ChatActivity.class);
+        it.putExtra(Constants.KEY_COLLECTION_CHAT, chat);
+        String receiverId = preferenceManager.getString(Constants.KEY_USED_ID);
+        if (Objects.equals(receiverId, chat.getLeader())){
+            receiverId = chat.getMembers().get(0);
+        }
+        it.putExtra(Constants.KEY_RECEIVER_ID, receiverId);
+        startActivity(it);
     }
 
     @Override
@@ -219,8 +232,22 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
     }
 
     @Override
-    public void updateChatRealtime() {
+    public void updateChatRealtime(int count) {
+        binding.swipeLayout.setRefreshing(false);
+        binding.shimmerEffect.stopShimmerAnimation();
+        binding.shimmerEffect.setVisibility(View.GONE);
+        binding.conversationRecycleView.setVisibility(View.VISIBLE);
+        binding.conversationRecycleView.setAdapter(conversationsAdapter);
 
+        chatList = chatsPresenter.getChatList();
+        if (count == 0){
+            conversationsAdapter.reset(chatList);
+            conversationsAdapter.notifyDataSetChanged();
+        }else {
+            conversationsAdapter.notifyItemRangeInserted(chatList.size(),chatList.size());
+            binding.conversationRecycleView.smoothScrollToPosition(chatList.size() - 1);
+            //chatAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

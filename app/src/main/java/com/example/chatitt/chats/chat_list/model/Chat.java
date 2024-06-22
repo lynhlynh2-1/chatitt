@@ -5,28 +5,59 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.Timestamp;
+import com.google.type.DateTime;
+
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
-public class Chat implements Parcelable {
+public class Chat implements Serializable {
     private String id;
     private String name;
-    private List<String> member;
-    private String type;
-    private String createdAt;
-    private String updatedAt;
-    private Message lastMessage;
-    private String receivedId;
+    private String leader;
+    private List<String> members;
+    private String type_chat;
+    private String type_msg;
+    private String timestamp;
+    private String lastMessage;
+    private String senderName;
+    private boolean online;
     private String avatar;
-    private String online;
-    private String publicKey;
+    private List<String> fcm;
 
-
-    public String getPublicKey() {
-        return publicKey;
+    public Chat(){
+    }
+    public Chat(String id, String name, String leader, List<String> members, String type_chat, String type_msg, String timestamp, String lastMessage, String senderName, boolean online, String avatar, List<String> fcm) {
+        this.id = id;
+        this.name = name;
+        this.leader = leader;
+        this.members = members;
+        this.type_chat = type_chat;
+        this.type_msg = type_msg;
+        this.timestamp = timestamp;
+        this.lastMessage = lastMessage;
+        this.senderName = senderName;
+        this.online = online;
+        this.avatar = avatar;
+        this.fcm = fcm;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public String getLeader() {
+        return leader;
+    }
+
+    public void setLeader(String leader) {
+        this.leader = leader;
+    }
+
+
+    public List<String> getFcm() {
+        return fcm;
+    }
+
+    public void setFcm(List<String> fcm) {
+        this.fcm = fcm;
     }
 
     public String getId() {
@@ -45,52 +76,20 @@ public class Chat implements Parcelable {
         this.name = name;
     }
 
-    public List<String> getMember() {
-        return member;
+    public List<String> getMembers() {
+        return members;
     }
 
-    public void setMember(List<String> member) {
-        this.member = member;
+    public void setMembers(List<String> member) {
+        this.members = member;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Message getLastMessage() {
+    public String getLastMessage() {
         return lastMessage;
     }
 
-    public void setLastMessage(Message lastMessage) {
+    public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
-    }
-
-    public String getReceivedID() {
-        return receivedId;
-    }
-
-    public void setReceivedID(String receivedID) {
-        this.receivedId = receivedID;
     }
 
     public String getAvatar() {
@@ -101,21 +100,43 @@ public class Chat implements Parcelable {
         this.avatar = avatar;
     }
 
-    public String getOnline() {
+    public boolean getOnline() {
         return online;
     }
 
-    public void setOnline(String online) {
+    public void setOnline(boolean online) {
         this.online = online;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getType_chat() {
+        return type_chat;
     }
 
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
+    public void setType_chat(String type_chat) {
+        this.type_chat = type_chat;
+    }
 
+    public String getType_msg() {
+        return type_msg;
+    }
+
+    public void setType_msg(String type_msg) {
+        this.type_msg = type_msg;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 }

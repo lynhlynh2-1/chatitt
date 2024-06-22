@@ -57,7 +57,7 @@ public class SignUpPresenter {
                         // Sign in success, update UI with the signed-in user's information
                         System.out.println("create success");
                         if(firebaseAuth.getCurrentUser() != null){
-                            user.put("id", firebaseAuth.getCurrentUser().getUid());
+                            user.put(Constants.KEY_ID, firebaseAuth.getCurrentUser().getUid());
                         }
                         DocumentReference userInfor = db.collection(Constants.KEY_COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid());
                         userInfor.set(user).addOnSuccessListener(documentReference -> {
