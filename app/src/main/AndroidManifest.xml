@@ -49,7 +49,40 @@
         <activity
             android:name=".profile.view.ChangePasswordActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".contacts.send_request.view.QRScanFriendActivity"
+            android:exported="false"
+            android:screenOrientation="sensorPortrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".chats.group_chat.info.view.ChangeInfoGroupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chats.group_chat.info.view.MemberActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chats.group_chat.info.view.GroupChatInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chats.individual_chat.info.view.PrivateChatInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chats.group_chat.info.view.AddMemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chats.individual_chat.info.view.FriendStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chats.individual_chat.info.view.ProfileDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".contacts.manage_request_friend.view.ManageReqFrieActivity"
+            android:exported="false" />
+        <activity
+            android:name=".contacts.send_request.view.ProfileScanUserActivity"
+            android:exported="false" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

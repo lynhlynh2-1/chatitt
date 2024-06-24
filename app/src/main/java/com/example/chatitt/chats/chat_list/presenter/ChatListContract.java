@@ -24,7 +24,10 @@ public class ChatListContract {
         void isAddedChat();
 
         void updateChatRealtime(int count);
+        void updateChat(int pos);
+        void notifyChatMove(int index, int pos);
 
         void onNewMemberAdded();
+
     }
 }

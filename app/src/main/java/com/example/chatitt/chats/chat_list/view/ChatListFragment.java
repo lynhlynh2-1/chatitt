@@ -244,10 +244,22 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
             conversationsAdapter.reset(chatList);
             conversationsAdapter.notifyDataSetChanged();
         }else {
-            conversationsAdapter.notifyItemRangeInserted(chatList.size(),chatList.size());
-            binding.conversationRecycleView.smoothScrollToPosition(chatList.size() - 1);
+            conversationsAdapter.notifyItemRangeInserted(0,chatList.size() - count);
+            binding.conversationRecycleView.smoothScrollToPosition(0);
             //chatAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void notifyChatMove(int index, int pos) {
+        conversationsAdapter.notifyItemMoved(index, pos);
+        conversationsAdapter.notifyItemChanged(index);
+        conversationsAdapter.notifyItemChanged(pos);
+    }
+
+    @Override
+    public void updateChat(int pos) {
+        conversationsAdapter.notifyItemChanged(pos);
     }
 
     @Override

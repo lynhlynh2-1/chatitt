@@ -34,6 +34,8 @@ import com.example.chatitt.chats.chat.presenter.ChatContract;
 import com.example.chatitt.chats.chat.presenter.ChatPresenter;
 import com.example.chatitt.chats.chat_list.model.Chat;
 import com.example.chatitt.chats.chat_list.model.Message;
+import com.example.chatitt.chats.group_chat.info.view.GroupChatInfoActivity;
+import com.example.chatitt.chats.individual_chat.info.view.PrivateChatInfoActivity;
 import com.example.chatitt.databinding.ActivityChatBinding;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
@@ -115,7 +117,9 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             String receivedId = (String) getIntent().getSerializableExtra(Constants.KEY_RECEIVER_ID);
 //            chatPresenter.joinChat(preferenceManager.getString(Constants.KEY_USED_ID),preferenceManager.getString(Constants.KEY_NAME),preferenceManager.getString(Constants.KEY_AVATAR), chat.getId(), chat.getType(), preferenceManager.getString(Constants.KEY_PUBLIC_KEY));
             binding.textName.setText(chat.getName());
-            binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat.getAvatar()));
+            if (chat.getAvatar() != null && !chat.getAvatar().isEmpty()){
+                binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat.getAvatar()));
+            }
             binding.textOnline.setText(Objects.equals(chat.getOnline(), "1") ? "Đang hoạt động": "Ngoại tuyến");
             binding.textOnline.setTextColor(Objects.equals(chat.getOnline(), "1") ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
             chatPresenter.getMessages(chat.getId());
@@ -135,7 +139,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         }else if (getIntent().getExtras()!=null){
             receivedList = getIntent().getExtras().getStringArrayList("create_group_chat");
             group_name = getIntent().getStringExtra(Constants.KEY_NAME);
-            binding.textName.setText("group_name");
+            binding.textName.setText(group_name);
             binding.textOnline.setText("Ngoại tuyến");
             binding.textOnline.setTextColor( getResources().getColor(R.color.seed) );
             binding.shimmerEffect.stopShimmerAnimation();
@@ -161,16 +165,15 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         });
         binding.imageInfo.setOnClickListener(v->{
             Intent it;
-
-//            if (chat!=null ){
-//                if (Objects.equals(chat.getType(), Constants.KEY_PRIVATE_CHAT)){
-//                    it = new Intent(getApplicationContext(), PrivateChatInfoActivity.class);
-//                }else {
-//                    it = new Intent(getApplicationContext(), GroupChatInfoActivity.class);
-//                }
-//                it.putExtra(Constants.KEY_COLLECTION_CHAT, chat);
-//                mStartForResult.launch(it);
-//            }
+            if (chat!=null ){
+                if (Objects.equals(chat.getType_chat(), Constants.KEY_PRIVATE_CHAT)){
+                    it = new Intent(getApplicationContext(), PrivateChatInfoActivity.class);
+                }else {
+                    it = new Intent(getApplicationContext(), GroupChatInfoActivity.class);
+                }
+                it.putExtra(Constants.KEY_COLLECTION_CHAT, chat);
+                mStartForResult.launch(it);
+            }
 //            else if(chatNoLastMessObj != null){
 //                if (Objects.equals(chatNoLastMessObj.getType(), Constants.KEY_PRIVATE_CHAT)){
 //                    it = new Intent(getApplicationContext(), PrivateChatInfoActivity.class);
@@ -180,10 +183,10 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 //                it.putExtra(Constants.KEY_COLLECTION_CHAT_NO_LMSG, chatNoLastMessObj);
 //                mStartForResult.launch(it);
 //            }
-//            else{
-//                Toast.makeText(getApplicationContext(),"Hãy gửi tin nhắn đầu tiên để xem thông tin", Toast.LENGTH_SHORT).show();
-//            }
-//
+            else{
+                Toast.makeText(getApplicationContext(),"Hãy gửi tin nhắn đầu tiên để xem thông tin", Toast.LENGTH_SHORT).show();
+            }
+
         });
         binding.camBtn.setOnClickListener(v->{
             ImagePicker.with(this)
@@ -372,7 +375,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 
     @Override
     public void onUpdateInforSuccess(String name, String avatar, Boolean online) {
-//        chat = chatPresenter.getChatNoLastMessObj();
+        chat = chatPresenter.getChat();
 //        chatPresenter.joinChat(preferenceManager.getString(Constants.KEY_USED_ID),preferenceManager.getString(Constants.KEY_NAME),preferenceManager.getString(Constants.KEY_AVATAR), chatNoLastMessObj.getId(), chatNoLastMessObj.getType(), preferenceManager.getString(Constants.KEY_PUBLIC_KEY));
 //        chatPresenter.getMessages(chatNoLastMessObj.getId());
 //        chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chatNoLastMessObj.getType(), secretKey, this)
@@ -445,16 +448,16 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     public void onCreateAndSendSuccess(String content, String typeMess, int pos) {
 
         chat = chatPresenter.getChat();
-        messageList.get(pos).setIsSending("2");
+//        messageList.get(pos).setIsSending("2");
         chatAdapter.notifyItemChanged(pos);
 
-        List<String> userIdList = new ArrayList<>();
-        if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT)){
-            userIdList = receivedList;
-        }else{
-            userIdList.add(chat.getMembers().get(0));
-        }
-        userIdList.add(preferenceManager.getString(Constants.KEY_USED_ID));
+//        List<String> userIdList = new ArrayList<>();
+//        if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT)){
+//            userIdList = receivedList;
+//        }else{
+//            userIdList.add(chat.getMembers().get(0));
+//        }
+//        userIdList.add(preferenceManager.getString(Constants.KEY_USED_ID));
 
         sendNoti(content,typeMess,chat.getName(),chat.getType_msg());
     }
@@ -599,8 +602,10 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     protected void onResume() {
         super.onResume();
         Chat chat1 = chatPresenter.getChat();
-        if (chat1!= null){
+        if (chat1.getName() != null ){
             binding.textName.setText(chat1.getName());
+        }
+        if (chat1.getAvatar()!= null){
             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat1.getAvatar()));
         }
 //        else if (chatNoLastMessObj!= null){

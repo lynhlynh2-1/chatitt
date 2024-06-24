@@ -23,6 +23,9 @@ import com.example.chatitt.R;
 import com.example.chatitt.chats.individual_chat.create_new.view.CreatePrivateChatActivity;
 import com.example.chatitt.contacts.main.presenter.ContactsContract;
 import com.example.chatitt.contacts.main.presenter.ContactsPresenter;
+import com.example.chatitt.contacts.manage_request_friend.view.ManageReqFrieActivity;
+import com.example.chatitt.contacts.send_request.view.ProfileScanUserActivity;
+import com.example.chatitt.contacts.send_request.view.QRScanFriendActivity;
 import com.example.chatitt.databinding.FragmentContactsBinding;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
@@ -89,33 +92,33 @@ public class ContactsFragment extends Fragment implements ContactsContract.ViewI
             it.putExtra("title", "Danh sách bạn bè");
             startActivity(it);
         });
-//        binding.btnScan.setOnClickListener(v->{
-//            ScanOptions options = new ScanOptions();
-//            options.setPrompt("Hướng camera về phía mã QR");
-//            options.setCameraId(0);  // Use a specific camera of the device
-//            options.setBeepEnabled(true);
-//            options.setOrientationLocked(true);
-//            options.setCaptureActivity(QRScanFriendActivity.class);
-//            barcodeLauncher.launch(options);
-//
-//        });
-//        binding.cardviewRequest.setOnClickListener(v->{
-//            Intent it = new Intent(requireContext(), ManageReqFrieActivity.class);
-//            startActivity(it);
-//        });
+        binding.btnScan.setOnClickListener(v->{
+            ScanOptions options = new ScanOptions();
+            options.setPrompt("Hướng camera về phía mã QR");
+            options.setCameraId(0);  // Use a specific camera of the device
+            options.setBeepEnabled(true);
+            options.setOrientationLocked(true);
+            options.setCaptureActivity(QRScanFriendActivity.class);
+            barcodeLauncher.launch(options);
+
+        });
+        binding.cardviewRequest.setOnClickListener(v->{
+            Intent it = new Intent(requireContext(), ManageReqFrieActivity.class);
+            startActivity(it);
+        });
 
         binding.makeFriend.setOnClickListener(v -> {
-            String phonenumber = binding.editPhone.getText().toString().trim();
-            if (Patterns.PHONE.matcher(phonenumber).matches() && phonenumber.startsWith("0") && phonenumber.length() == 10){
-                if (phonenumber.equals(preferenceManager.getString(Constants.KEY_PHONE))){
+            String email = binding.editPhone.getText().toString().trim();
+            if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                if (email.equals(preferenceManager.getString(Constants.KEY_EMAIL))){
                     Toast.makeText(requireContext(), "Bạn không thể kết bạn chính mình", Toast.LENGTH_SHORT).show();
                 }else {
                     binding.transparentBg.startAnimation(fromBottomBgAnim);
                     binding.progressBar.setVisibility(View.VISIBLE);
-                    presenter.searchUser(phonenumber);
+                    presenter.searchUser(email);
                 }
             }else {
-                Toast.makeText(requireContext(), "Số điện thoại không đúng định dạng, hãy nhập lại", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Email không đúng định dạng, hãy thử lại", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -146,8 +149,7 @@ public class ContactsFragment extends Fragment implements ContactsContract.ViewI
     }
     Bitmap encodeAsBitmap(String str, int qrCodeSize) throws WriterException {
         BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-        Bitmap bitmap = barcodeEncoder.encodeBitmap(str, BarcodeFormat.QR_CODE, qrCodeSize, qrCodeSize);
-        return bitmap;
+        return barcodeEncoder.encodeBitmap(str, BarcodeFormat.QR_CODE, qrCodeSize, qrCodeSize);
     }
 
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
@@ -164,13 +166,10 @@ public class ContactsFragment extends Fragment implements ContactsContract.ViewI
                         if (userId.equals(preferenceManager.getString(Constants.KEY_PHONE))){
                             Toast.makeText(requireContext(), "Bạn đang quét QR của chính bạn!", Toast.LENGTH_SHORT).show();
                         }else {
-//                            Intent intent = new Intent(requireContext(), ProfileScanUserActivity.class);
-//                            intent.putExtra("userId",userId);
-//                            startActivity(intent);
+                            Intent intent = new Intent(requireContext(), ProfileScanUserActivity.class);
+                            intent.putExtra("userId", userId);
+                            startActivity(intent);
                         }
-
-
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -182,15 +181,15 @@ public class ContactsFragment extends Fragment implements ContactsContract.ViewI
     public void onSearchUserError() {
         binding.transparentBg.startAnimation(toBottomBgAnim);
         binding.progressBar.setVisibility(View.GONE);
-        Toast.makeText(requireContext(), "Số điện thoại chưa đăng ký tài khoản, vui lòng thử số khác!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Địa chỉ email chưa đăng ký tài khoản, vui lòng thử số khác!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSearchUserSuccess() {
         binding.transparentBg.startAnimation(toBottomBgAnim);
         binding.progressBar.setVisibility(View.GONE);
-//        Intent intent = new Intent(requireContext(), ProfileScanUserActivity.class);
-//        intent.putExtra("userId",presenter.getUserModels().getId());
-//        startActivity(intent);
+        Intent intent = new Intent(requireContext(), ProfileScanUserActivity.class);
+        intent.putExtra("userId", presenter.getUserModels().getId());
+        startActivity(intent);
     }
 }

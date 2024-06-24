@@ -14,7 +14,7 @@
         android:layout_width="@dimen/_45sdp"
         android:layout_height="@dimen/_45sdp"
         app:shapeAppearanceOverlay="@style/circular"
-        android:background="@color/md_theme_light_onSurface"
+        android:background="@drawable/ic_group_placeholder"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

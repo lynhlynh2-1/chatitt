@@ -2,6 +2,8 @@ package com.example.chatitt.chats.individual_chat.create_new.presenter;
 
 import com.example.chatitt.authentication.model.User;
 
+import java.util.List;
+
 public class CreateChatPrivateContract {
     public interface ViewInterface{
 
@@ -9,7 +11,7 @@ public class CreateChatPrivateContract {
 
         void onSearchUserError();
 
-        void onSearchUserSuccess();
+        void onSearchUserSuccess(List<User> list);
 
         void onGetListFriendError();
 

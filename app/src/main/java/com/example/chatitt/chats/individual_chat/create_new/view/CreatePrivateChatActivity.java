@@ -115,8 +115,6 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra(Constants.KEY_COLLECTION_CHAT, createChatPrivatePresenter.getChat());
         intent.putExtra(Constants.KEY_RECEIVER_ID, id);
-        intent.putExtra(Constants.KEY_RECEIVER_IMAGE, id);
-        intent.putExtra(Constants.KEY_RECEIVER_NAME, id);
         startActivity(intent);
         finish();
     }
@@ -141,16 +139,16 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
         binding.shimmerEffect.stopShimmerAnimation();
         binding.shimmerEffect.setVisibility(View.GONE);
         binding.textErrorMessage.setVisibility(View.VISIBLE);
-        binding.textErrorMessage.setText("Tìm kiếm gặp lỗi");
+        binding.textErrorMessage.setText("Không tìm thấy");
         int colorEror = ContextCompat.getColor(getApplicationContext(), R.color.md_theme_light_error);
         binding.textErrorMessage.setTextColor(colorEror);
     }
 
     @Override
-    public void onSearchUserSuccess() {
+    public void onSearchUserSuccess(List<User> list) {
         binding.swipeLayout.setRefreshing(false);
 
-        List<User> list = createChatPrivatePresenter.getUserModelList();
+
         binding.shimmerEffect.stopShimmerAnimation();
         binding.shimmerEffect.setVisibility(View.GONE);
         if (list.size() != 0){
@@ -178,6 +176,7 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
         userModelList = createChatPrivatePresenter.getUserModelList();
         binding.shimmerEffect.stopShimmerAnimation();
         binding.shimmerEffect.setVisibility(View.GONE);
+        binding.swipeLayout.setRefreshing(false);
         if (userModelList.size() != 0){
             adapter.reset(userModelList);
             binding.usersRecyclerView.setVisibility(View.VISIBLE);

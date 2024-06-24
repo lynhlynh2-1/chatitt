@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".chats.group_chat.info.view.ChangeInfoGroupActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageBack"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:background="@drawable/background_icon"
+        android:padding="@dimen/_6sdp"
+        android:src="@drawable/ic_back"
+        android:tint="@color/md_theme_light_onSurfaceVariant"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleAvatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:text="Ảnh nhóm"
+        android:textColor="@color/md_theme_light_onSurfaceVariant"
+        android:textSize="@dimen/_14sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageBack" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageProfile"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@color/rippleDark"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleAvatar"
+        app:shapeAppearanceOverlay="@style/circular" />
+
+    <ImageButton
+        android:id="@+id/updateProfileImg"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/background_image"
+        android:elevation="15dp"
+        android:src="@drawable/ic_photo_camera"
+        app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
+        app:layout_constraintEnd_toEndOf="@+id/imageProfile" />
+
+    <TextView
+        android:id="@+id/titleName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:text="Tên nhóm"
+        android:textColor="@color/md_theme_light_onSurfaceVariant"
+        android:textSize="@dimen/_14sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="@+id/textName"
+        app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
+
+    <EditText
+        android:id="@+id/textName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:background="@drawable/background_chat_input"
+        android:backgroundTint="@color/md_theme_dark_onSecondaryContainer"
+        android:fontFamily="@font/montserrat_semibold"
+        android:paddingStart="@dimen/_20sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_20sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:textAlignment="center"
+        android:textColor="@color/md_theme_light_onSurfaceVariant"
+        android:textSize="@dimen/_18sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleName"
+        />
+
+    <Button
+        android:id="@+id/change"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Xong"
+        android:textSize="@dimen/_16sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textName"
+        android:enabled="false"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

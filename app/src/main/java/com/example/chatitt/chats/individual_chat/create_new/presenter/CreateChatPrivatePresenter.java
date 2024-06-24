@@ -15,7 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -45,12 +47,12 @@ public class CreateChatPrivatePresenter {
     }
 
     public void searchUser (String keyword){
-        db.collection(Constants.KEY_COLLECTION_USERS)
-                .whereEqualTo(Constants.KEY_EMAIL,keyword)
-                .whereEqualTo(Constants.KEY_PHONE,keyword)
-                .whereEqualTo(Constants.KEY_NAME,keyword)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Query query = db.collection(Constants.KEY_COLLECTION_USERS).where(Filter.or(
+                Filter.equalTo(Constants.KEY_EMAIL,keyword),
+                Filter.equalTo(Constants.KEY_PHONE,keyword),
+                Filter.equalTo(Constants.KEY_NAME,keyword)
+        ));
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
@@ -58,14 +60,15 @@ public class CreateChatPrivatePresenter {
                                 viewInterface.onNoUser();
                                 return;
                             }
+                            List<User> usersFind = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 User user = document.toObject(User.class);
-                                userModelList.add(user);
+                                usersFind.add(user);
                             }
-                            viewInterface.onSearchUserSuccess();
+                            viewInterface.onSearchUserSuccess(usersFind);
                         } else {
-                            Log.d(TAG, "Error getting ListFriend ", task.getException());
+                            Log.d(TAG, "Error search User ", task.getException());
                             viewInterface.onSearchUserError();
                         }
                     }
@@ -79,6 +82,7 @@ public class CreateChatPrivatePresenter {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            userModelList.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 User user = document.toObject(User.class);

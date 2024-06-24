@@ -170,20 +170,19 @@ public class CreateGroupChatActivity extends AppCompatActivity implements Create
         binding.shimmerEffect.stopShimmerAnimation();
         binding.shimmerEffect.setVisibility(View.GONE);
         binding.textErrorMessage.setVisibility(View.VISIBLE);
-        binding.textErrorMessage.setText("Tìm kiếm gặp lỗi");
+        binding.textErrorMessage.setText("Không tìm kiếm");
         int colorEror = ContextCompat.getColor(getApplicationContext(), R.color.md_theme_light_error);
         binding.textErrorMessage.setTextColor(colorEror);
     }
 
     @Override
-    public void onSearchUserSuccess() {
-        List<User> list = createGroupChatPresenter.getUserModelList();
+    public void onSearchUserSuccess(List<User> usersFind) {
         binding.shimmerEffect.stopShimmerAnimation();
         binding.shimmerEffect.setVisibility(View.GONE);
-        if (list.size() != 0){
+        if (usersFind.size() != 0){
             List<User> chosen_list = adapter.getChosenList();
             int cnt = chosen_list.size();
-            for (User u: list) {
+            for (User u: usersFind) {
                 for (User c: chosen_list) {
                     if (Objects.equals(u.getPhonenumber(), c.getPhonenumber())){
                         u.setChecked(true);
@@ -196,7 +195,7 @@ public class CreateGroupChatActivity extends AppCompatActivity implements Create
                 }
             }
 
-            adapter.reset(list);
+            adapter.reset(usersFind);
             binding.usersRecyclerView.setVisibility(View.VISIBLE);
         }
 

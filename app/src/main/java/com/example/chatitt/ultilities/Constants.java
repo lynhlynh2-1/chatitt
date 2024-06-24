@@ -7,6 +7,14 @@ public class Constants {
 
     public static final String KEY_PREFERENCE_NAME = "ChatItt";
     public static final String TAG = "lynh.pham";
+
+    public static final String KEY_NOT_FRIEND = "0";
+    public static final String KEY_IS_FRIEND = "1";
+    public static final String KEY_MY_REQ_FRIEND = "2";
+    public static final String KEY_OTHER_REQ_FRIEND = "3";
+
+
+
     public static final String KEY_COLLECTION_USERS = "users";
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";

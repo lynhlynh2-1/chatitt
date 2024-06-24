@@ -61,7 +61,7 @@
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:layout_marginEnd="@dimen/_16sdp"
-        android:src="@drawable/chatnhom"
+        android:src="@drawable/ic_group_placeholder"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/search_btn"
         app:layout_constraintEnd_toEndOf="parent"

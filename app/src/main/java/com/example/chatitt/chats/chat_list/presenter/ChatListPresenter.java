@@ -14,8 +14,10 @@ import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ChatListPresenter {
     private final ChatListContract.ViewInterface viewInterface;
@@ -40,9 +43,7 @@ public class ChatListPresenter {
         db = FirebaseFirestore.getInstance();
         chatList = new ArrayList<>();
         JSONObject data = new JSONObject();
-
     }
-
 
     public List<Chat> getChatList() {
         return chatList;
@@ -57,8 +58,10 @@ public class ChatListPresenter {
 
     private int k;
     public void getMessaged(){
-        db.collection(Constants.KEY_COLLECTION_CHAT)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection(Constants.KEY_COLLECTION_CHAT).where(Filter.or(
+                Filter.equalTo(Constants.KEY_LEADER, preferenceManager.getString(Constants.KEY_USED_ID)),
+                Filter.arrayContains(Constants.KEY_MEMBERS, preferenceManager.getString(Constants.KEY_USED_ID))
+        )).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
@@ -71,9 +74,10 @@ public class ChatListPresenter {
                         }
                         int count = chatList.size();
                         k = count;
-
+                        boolean hasAdd = false;
                         for (DocumentChange documentChange : value.getDocumentChanges()){
                             if (documentChange.getType() == DocumentChange.Type.ADDED ){
+                                hasAdd = true;
                                 QueryDocumentSnapshot docRef = documentChange.getDocument();
                                 Chat chat = docRef.toObject(Chat.class);
                                 k = k + 1;
@@ -94,19 +98,35 @@ public class ChatListPresenter {
                                                     Log.w(TAG, "Listen user in getChat List empty.", e);
                                                     return;
                                                 }
-                                                chatList.get(k-1).setName(v.getString(Constants.KEY_NAME));
-                                                chatList.get(k-1).setAvatar(v.getString(Constants.KEY_AVATAR));
-                                                viewInterface.updateChatRealtime(k-1);
+                                                int chatIndex = chatList.indexOf(chat);
+                                                chatList.get(chatIndex).setName(v.getString(Constants.KEY_NAME));
+                                                chatList.get(chatIndex).setAvatar(v.getString(Constants.KEY_AVATAR));
+                                                viewInterface.updateChat(chatIndex);
                                             });
                                 }
 
                             }
                             if (documentChange.getType() == DocumentChange.Type.MODIFIED){
-
+                                QueryDocumentSnapshot docRef = documentChange.getDocument();
+                                Chat chat = docRef.toObject(Chat.class);
+                                String chatId = chat.getId(); // Name to search for
+                                int chatIndex = chatList.stream()
+                                        .map(Chat::getId)
+                                        .collect(Collectors.toList())
+                                        .indexOf(chatId);
+                                Chat modifiedChat = chatList.get(chatIndex);
+                                modifiedChat.setLastMessage(chat.getLastMessage());
+                                modifiedChat.setSenderName(chat.getSenderName());
+                                modifiedChat.setTimestamp(chat.getTimestamp());
+                                chatList.sort((o1,o2)-> o2.getTimestamp().compareTo(o1.getTimestamp()));
+                                viewInterface.notifyChatMove(chatIndex,0);
                             }
                         }
-                        chatList.sort((obj1, obj2) -> obj2.getTimestamp().compareTo(obj1.getTimestamp()));
-                        viewInterface.updateChatRealtime(count);
+                        if (hasAdd){
+                            chatList.sort((o1,o2)-> o2.getTimestamp().compareTo(o1.getTimestamp()));
+                            viewInterface.updateChatRealtime(count);
+                        }
+
                         Log.d(TAG, "Current list chat: " + chatList.size());
                     }
                 });
