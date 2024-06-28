@@ -50,8 +50,6 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.setData(userModelList.get(position));
-        if (position == userModelList.size() - 1)
-            holder.binding.title.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -71,8 +69,8 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
         void setData(User userModel){
             binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
             binding.textName.setText(userModel.getName());
-            if (!userModel.getId().equals(leaderId))
-                binding.title.setVisibility(View.GONE);
+            if (userModel.getId().equals(leaderId))
+                binding.title.setVisibility(View.VISIBLE);
             if (!isAdmin) {
                 binding.btnDelete.setVisibility(View.GONE);
                 return;

@@ -3,12 +3,15 @@ package com.example.chatitt.contacts.send_request.presenter;
 import androidx.annotation.NonNull;
 
 import com.example.chatitt.authentication.model.User;
+import com.example.chatitt.chats.chat_list.model.Chat;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 public class ProfileScanUserPresenter {
 
@@ -18,6 +21,7 @@ public class ProfileScanUserPresenter {
     private String status;
     private Boolean isSend;
     private FirebaseFirestore db;
+    private Chat chat;
 
 
     public ProfileScanUserPresenter(ProfileScanUserContract.ViewInterface viewInterface, PreferenceManager preferenceManager) {
@@ -151,4 +155,46 @@ public class ProfileScanUserPresenter {
 //                });
     }
 
+    private void checkForConversionRemotely(String senderId, String receiverId, User user){
+        ArrayList<String> leader = new ArrayList<>();
+        leader.add(senderId);
+        leader.add(receiverId);
+
+        ArrayList<String> mem1 = new ArrayList<>();
+        mem1.add(senderId);
+        ArrayList<String> mem2 = new ArrayList<>();
+        mem2.add(receiverId);
+
+        ArrayList<ArrayList<String>> mem = new ArrayList<>();
+        mem.add(mem1);
+        mem.add(mem2);
+
+        db.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereIn(Constants.KEY_LEADER, leader)
+                .whereIn(Constants.KEY_MEMBERS, mem)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() ){
+                        if (task.getResult() == null || task.getResult().getDocuments().isEmpty()){
+                            viewInterface.onChatNotExist(user);
+                        }else {
+                            DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
+                            chat = documentSnapshot.toObject(Chat.class);
+                            viewInterface.onFindChatSucces(user.getId());
+                        }
+
+                    }else {
+                        viewInterface.onFindChatError();
+                    }
+                });
+    }
+
+
+    public void findChat(User user) {
+        checkForConversionRemotely(preferenceManager.getString(Constants.KEY_USED_ID), user.getId(), user);
+    }
+
+    public Chat getChat() {
+        return this.chat;
+    }
 }

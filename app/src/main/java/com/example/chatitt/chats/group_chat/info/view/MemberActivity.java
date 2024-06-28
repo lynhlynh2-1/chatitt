@@ -77,7 +77,7 @@ public class MemberActivity extends AppCompatActivity implements Contract.MemLis
 
 
         presenter.registerMemberListener(chat.getId());
-        presenter.getMember(chat);
+//        presenter.getMember(chat);
         binding.progressBar.setVisibility(View.VISIBLE);
 
     }
@@ -148,13 +148,18 @@ public class MemberActivity extends AppCompatActivity implements Contract.MemLis
     }
 
     @Override
-    public void onGetMemberSuccess() {
+    public void onGetMemberSuccess(User user) {
         binding.recyclerview.setVisibility(View.VISIBLE);
         binding.progressBar.setVisibility(View.GONE);
         binding.swipeLayout.setRefreshing(false);
         binding.textErrorMessage.setVisibility(View.GONE);
-        userModelList = presenter.getUserModelList();
+        userModelList.add(user);
         adapter.notifyItemInserted(userModelList.size() - 1);
+    }
+
+    @Override
+    public void resetAdapter() {
+        adapter.reset(new ArrayList<>());
     }
 
     @Override
@@ -167,10 +172,9 @@ public class MemberActivity extends AppCompatActivity implements Contract.MemLis
 
     @Override
     public void onDelMemSuccess(int i) {
-
         binding.progressBar.setVisibility(View.GONE);
         binding.recyclerview.setVisibility(View.VISIBLE);
-        userModelList = presenter.getUserModelList();
+        userModelList.remove(i);
         adapter.notifyItemRemoved(i);
     }
 

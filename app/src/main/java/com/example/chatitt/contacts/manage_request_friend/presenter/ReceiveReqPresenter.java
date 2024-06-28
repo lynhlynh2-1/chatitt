@@ -53,7 +53,7 @@ public class ReceiveReqPresenter {
                                                     if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                                                         User tempUser = task.getResult().toObject(User.class);
                                                         userModelList.add(tempUser);
-                                                        viewInterface.getReceiveReqSuccess();
+                                                        viewInterface.getReceiveReqSuccess(tempUser);
                                                     } else
                                                         viewInterface.getReceiveReqFail();
                                                 }

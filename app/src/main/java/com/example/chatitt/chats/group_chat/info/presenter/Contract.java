@@ -41,7 +41,7 @@ public class Contract {
         void onDelMemEror();
 
         void onGetMemberError();
-        void onGetMemberSuccess();
+        void onGetMemberSuccess(User user);
 
         void deleteMember(String chatId, String id);
 
@@ -50,5 +50,7 @@ public class Contract {
         void onNewMemberAdded();
 
         void onMemInfoChangeSuccess(int i);
+
+        void resetAdapter();
     }
 }

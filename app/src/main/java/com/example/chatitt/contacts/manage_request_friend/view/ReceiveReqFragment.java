@@ -36,7 +36,8 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
         preferenceManager = new PreferenceManager(requireContext());
         presenter = new ReceiveReqPresenter(this, preferenceManager);
         userModelList = new ArrayList<>();
-
+        adapter = new ReceiveReqAdapter(userModelList, presenter, preferenceManager);
+        binding.recyclerview.setAdapter(adapter);
 
         presenter.getReceiveReq();
 
@@ -54,14 +55,11 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
     }
 
     @Override
-    public void getReceiveReqSuccess() {
+    public void getReceiveReqSuccess(User newUser) {
         binding.swipeLayout.setRefreshing(false);
-        userModelList = presenter.getUserModelList();
-        adapter = new ReceiveReqAdapter(userModelList, presenter, preferenceManager);
-        binding.recyclerview.setAdapter(adapter);
-//        adapter.notifyItemInserted(userModelList.size() - 1);
+        userModelList.add(newUser);
+        adapter.notifyItemInserted(userModelList.size() - 1);
         binding.progressBar.setVisibility(View.GONE);
-
     }
 
     @Override

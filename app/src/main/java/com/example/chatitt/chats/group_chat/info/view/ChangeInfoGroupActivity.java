@@ -43,7 +43,8 @@ public class ChangeInfoGroupActivity extends AppCompatActivity {
     }
     private void init(){
         binding.textName.setHint(getIntent().getStringExtra("name"));
-        binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(getIntent().getStringExtra("avatar")));
+        if (getIntent().getStringExtra("avatar") != null)
+            binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(getIntent().getStringExtra("avatar")));
         chatId = getIntent().getStringExtra("chatId");
     }
     private void setListener(){

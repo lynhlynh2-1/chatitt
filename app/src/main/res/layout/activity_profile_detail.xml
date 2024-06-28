@@ -411,7 +411,7 @@
 
                     </RelativeLayout>
                     <TextView
-                        android:id="@+id/text_phone"
+                        android:id="@+id/text_email"
                         android:text="a@mail.com"
                         android:textStyle="bold"
                         android:textColor="@color/black"
@@ -426,9 +426,67 @@
 
             </androidx.cardview.widget.CardView>
 
-            <include
-                android:id="@+id/item_email"
-                layout="@layout/item_email" />
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_7sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                card_view:cardCornerRAdius="5dp">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_5sdp">
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:padding="@dimen/_2sdp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:padding="@dimen/_2sdp"
+                                android:src="@drawable/ic_phone"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_width="@dimen/_23sdp"
+                                android:layout_height="@dimen/_23sdp"
+                                app:tint="@color/md_theme_light_onSurface"/>
+                            <TextView
+                                android:text="Số điện thoại"
+                                android:layout_marginStart="@dimen/_3sdp"
+                                android:textSize="@dimen/_13sdp"
+                                android:textStyle="bold"
+                                android:layout_gravity="center"
+                                android:textColor="#605E5E"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+                    <TextView
+                        android:id="@+id/text_phone"
+                        android:text="01235456"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_14ssp"
+                        android:layout_marginStart="@dimen/_21sdp"
+                        android:layout_marginBottom="@dimen/_11sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
 
         </LinearLayout>

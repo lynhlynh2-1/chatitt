@@ -55,12 +55,17 @@ public class MemActivityPresenter {
                     }
                     if (v != null && v.exists()){
                         Chat chat = v.toObject(Chat.class);
-                        if (chat.getMembers().size() == userModelList.size()){
+                        if (userModelList.size() == 0){
+                            ArrayList<String> list = new ArrayList<>();
+                            list.add(chat.getLeader());
+                            getUserInforAndListener(list);
+                        }
+                        if (chat.getMembers().size() + 1 == userModelList.size()){
                             return;
-                        }else if (chat.getMembers().size() > userModelList.size()){
+                        }else if (chat.getMembers().size() + 1 > userModelList.size()){
                             //Add Mem
                             int oldSize = userModelList.size();
-                            int newSize = chat.getMembers().size() - 1;
+                            int newSize = chat.getMembers().size();
                             List<String> userIDList = new ArrayList<>();
                             for (int i = oldSize; i < newSize; i++) {
                                 String userId = chat.getMembers().get(i);
@@ -142,6 +147,7 @@ public class MemActivityPresenter {
     }
     public void getMember(Chat chat){
         userModelList.clear();
+        viewInterface.resetAdapter();
         List<String> userIDList = new ArrayList<>(chat.getMembers());
         userIDList.add(chat.getLeader());
         getUserInforAndListener(userIDList);
@@ -158,7 +164,7 @@ public class MemActivityPresenter {
                         public void onSuccess(DocumentSnapshot v) {
                             User user = v.toObject(User.class);
                             userModelList.add(user);
-                            viewInterface.onGetMemberSuccess();
+                            viewInterface.onGetMemberSuccess(user);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

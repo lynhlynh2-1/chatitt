@@ -115,6 +115,12 @@ public class ChatListPresenter {
                                         .collect(Collectors.toList())
                                         .indexOf(chatId);
                                 Chat modifiedChat = chatList.get(chatIndex);
+                                if (!chat.getName().equals(modifiedChat.getName())){
+                                    modifiedChat.setName(chat.getName());
+                                    modifiedChat.setAvatar(chat.getAvatar());
+                                    viewInterface.updateChat(chatIndex);
+                                    continue;
+                                }
                                 modifiedChat.setLastMessage(chat.getLastMessage());
                                 modifiedChat.setSenderName(chat.getSenderName());
                                 modifiedChat.setTimestamp(chat.getTimestamp());

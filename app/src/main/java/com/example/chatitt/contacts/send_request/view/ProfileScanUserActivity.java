@@ -65,17 +65,39 @@ public class ProfileScanUserActivity extends AppCompatActivity implements Profil
             presenter.delReq(you.getId());
         });
         binding.btnChat.setOnClickListener(v->{
-            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-            intent.putExtra(Constants.KEY_USER, you);
-            startActivity(intent);
+            binding.loading.setVisibility(View.VISIBLE);
+            presenter.findChat(you);
         });
 
         binding.btnChat1.setOnClickListener(v->{
-            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-            intent.putExtra(Constants.KEY_USER, you);
-            startActivity(intent);
+            binding.loading.setVisibility(View.VISIBLE);
+            presenter.findChat(you);
         });
 
+    }
+    @Override
+    public void onFindChatSucces(String id) {
+        binding.loading.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra(Constants.KEY_COLLECTION_CHAT, presenter.getChat());
+        intent.putExtra(Constants.KEY_RECEIVER_ID, id);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onFindChatError() {
+        binding.loading.setVisibility(View.VISIBLE);
+        Helpers.showToast(getApplicationContext(),"Xảy ra lỗi, vui lòng kiểm tra kết nối mạng và thử lại!!");
+    }
+
+    @Override
+    public void onChatNotExist(User user) {
+        binding.loading.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra(Constants.KEY_USER, user);
+        startActivity(intent);
+        finish();
     }
 
     @Override

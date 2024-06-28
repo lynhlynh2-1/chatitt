@@ -41,8 +41,10 @@ public class ChangeGroupInfoPresenter {
 
     public void updateChatInfo(String chatId, String name, String avatar){
         Map<String, Object> data = new HashMap<>();
-        data.put(Constants.KEY_NAME, name);
-        data.put(Constants.KEY_AVATAR, avatar);
+        if (name != null)
+            data.put(Constants.KEY_NAME, name);
+        if (avatar != null)
+            data.put(Constants.KEY_AVATAR, avatar);
         db.collection(Constants.KEY_COLLECTION_CHAT)
                 .document(chatId)
                 .update(data)

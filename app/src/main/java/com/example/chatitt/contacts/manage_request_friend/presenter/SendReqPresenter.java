@@ -52,7 +52,7 @@ public class SendReqPresenter {
                                                     if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                                                         User tempUser = task.getResult().toObject(User.class);
                                                         userModelList.add(tempUser);
-                                                        viewInterface.getSendReqSuccess();
+                                                        viewInterface.getSendReqSuccess(tempUser);
                                                     } else
                                                         viewInterface.getSendReqFail();
                                                 }

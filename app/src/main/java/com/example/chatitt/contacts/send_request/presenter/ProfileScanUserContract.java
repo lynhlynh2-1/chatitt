@@ -1,5 +1,7 @@
 package com.example.chatitt.contacts.send_request.presenter;
 
+import com.example.chatitt.authentication.model.User;
+
 public class ProfileScanUserContract {
     public interface PresenterInterface {
 
@@ -21,5 +23,8 @@ public class ProfileScanUserContract {
         void delReqFail();
 
         void delReqSuccess();
+        void onFindChatSucces(String id);
+        void onFindChatError();
+        void onChatNotExist(User user);
     }
 }

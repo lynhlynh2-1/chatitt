@@ -82,17 +82,19 @@ public class ProfileDetailActivity extends AppCompatActivity implements Contract
             binding.textCity.setText("Không rõ");
             binding.textAddressDetail.setText("Không rõ");
         }
-        if (userModel.getEmail() != null){
-            preferenceManager.putString(Constants.KEY_EMAIL, userModel.getEmail());
 
-            binding.textPhone.setText(userModel.getEmail());
+        preferenceManager.putString(Constants.KEY_EMAIL, userModel.getEmail());
+        binding.textEmail.setText(userModel.getEmail());
+
+        if (userModel.getEmail() != null){
+            preferenceManager.putString(Constants.KEY_PHONE,userModel.getPhonenumber());
+
+            binding.textPhone.setText(userModel.getPhonenumber());
             binding.textPhone.setVisibility(View.VISIBLE);
         }else {
             binding.textPhone.setText("Không có");
         }
 
-        binding.itemEmail.textEmail.setText(userModel.getPhonenumber());
-        preferenceManager.putString(Constants.KEY_PHONE,userModel.getPhonenumber());
     }
 
     @Override
