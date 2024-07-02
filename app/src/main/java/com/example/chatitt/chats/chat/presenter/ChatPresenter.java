@@ -211,7 +211,7 @@ public class ChatPresenter {
 //                });
     }
 
-    public void send(String chatId, String content, String typeChat, String typeMess, int pos) {
+    public void send(String chatId, String content, String typeMess, int pos) {
         DocumentReference messRef = db.collection(Constants.KEY_COLLECTION_CHAT).document(chatId)
                 .collection(Constants.KEY_COLLECTION_MESSAGE).document();
         Map<String, Object> msg = new HashMap<>();

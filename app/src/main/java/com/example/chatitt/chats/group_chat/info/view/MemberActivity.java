@@ -159,7 +159,8 @@ public class MemberActivity extends AppCompatActivity implements Contract.MemLis
 
     @Override
     public void resetAdapter() {
-        adapter.reset(new ArrayList<>());
+        userModelList.clear();
+        adapter.reset(userModelList);
     }
 
     @Override
@@ -204,6 +205,7 @@ public class MemberActivity extends AppCompatActivity implements Contract.MemLis
 
     @Override
     public void onMemInfoChangeSuccess(int i) {
+        binding.progressBar.setVisibility(View.GONE);
         adapter.notifyItemChanged(i);
     }
 }

@@ -71,6 +71,8 @@ public class Constants {
     public static final String KEY_TYPE_CHAT = "type_chat";
     public static final String KEY_TYPE_MSG = "type_msg";
     public static final String KEY_ID = "id";
+    public static final int RECORDING_REQUEST_CODE = 123;
+
 
     public static HashMap<String, String> remotoMsgHeaders = null;
 
@@ -78,6 +80,7 @@ public class Constants {
     public static final String KEY_GROUP_CHAT = "GROUP_CHAT";
     public static final String KEY_TYPE_TEXT = "TEXT";
     public static final String KEY_TYPE_IMAGE = "IMAGE";
+    public static final String KEY_TYPE_VOICE = "VOICE";
 //    public static final String BASE_URL = "http://192.168.50.128:8000/api/v1/";
     public static final String BASE_URL = "http://10.0.2.2:8000/api/v1/";
 //    public static final String BASE_URL_SOCKET = "http://192.168.50.128:16000";

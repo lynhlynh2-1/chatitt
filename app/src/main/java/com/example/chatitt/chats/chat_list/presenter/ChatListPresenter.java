@@ -99,8 +99,8 @@ public class ChatListPresenter {
                                                     return;
                                                 }
                                                 int chatIndex = chatList.indexOf(chat);
-                                                chatList.get(chatIndex).setName(v.getString(Constants.KEY_NAME));
-                                                chatList.get(chatIndex).setAvatar(v.getString(Constants.KEY_AVATAR));
+                                                chat.setName(v.getString(Constants.KEY_NAME));
+                                                chat.setAvatar(v.getString(Constants.KEY_AVATAR));
                                                 viewInterface.updateChat(chatIndex);
                                             });
                                 }
@@ -115,7 +115,7 @@ public class ChatListPresenter {
                                         .collect(Collectors.toList())
                                         .indexOf(chatId);
                                 Chat modifiedChat = chatList.get(chatIndex);
-                                if (!chat.getName().equals(modifiedChat.getName())){
+                                if (!Objects.equals(chat.getType_chat(), Constants.KEY_PRIVATE_CHAT) && !chat.getName().equals(modifiedChat.getName())){
                                     modifiedChat.setName(chat.getName());
                                     modifiedChat.setAvatar(chat.getAvatar());
                                     viewInterface.updateChat(chatIndex);

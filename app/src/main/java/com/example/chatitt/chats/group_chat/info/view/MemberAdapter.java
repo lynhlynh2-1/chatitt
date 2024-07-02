@@ -69,40 +69,61 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
         void setData(User userModel){
             binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
             binding.textName.setText(userModel.getName());
-            if (userModel.getId().equals(leaderId))
+            if (userModel.getId().equals(leaderId)){
                 binding.title.setVisibility(View.VISIBLE);
+                binding.btnDelete.setVisibility(View.GONE);
+            }
             if (!isAdmin) {
                 binding.btnDelete.setVisibility(View.GONE);
                 return;
             }
 
             binding.btnDelete.setOnClickListener(v -> {
+                if (userModelList.size() <= 3){
                     // Tạo AlertDialog khi cần
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(itemView.getContext());
-                    alertDialogBuilder.setTitle("Xác nhận");
-                    alertDialogBuilder.setMessage("Bạn có chắc chắn muốn người này khỏi nhóm không!");
+                    alertDialogBuilder.setTitle("Lỗi!!!");
+                    alertDialogBuilder.setMessage("Bạn không thể xóa thêm thành viên khi số lượng thành viên đạt mức tối thiểu(3). Nếu vẫn muốn xóa, vui lòng xóa nhóm này?");
                     alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // Xử lý khi người dùng nhấn OK
-                            viewInterface.deleteMember(chatId, userModel.getId());
-                            dialog.dismiss(); // Đóng dialog
-                        }
-                    });
-
-                    // Nút "Hủy"
-                    alertDialogBuilder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Xử lý khi người dùng nhấn Hủy
                             dialog.dismiss(); // Đóng dialog
                         }
                     });
                     // Tạo AlertDialog từ AlertDialogBuilder
                     AlertDialog alertDialog = alertDialogBuilder.create();
-
                     // Hiển thị AlertDialog
                     alertDialog.show();
+
+                    return;
+                }
+                // Tạo AlertDialog khi cần
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(itemView.getContext());
+                alertDialogBuilder.setTitle("Xác nhận");
+                alertDialogBuilder.setMessage("Bạn có chắc chắn muốn xóa người này khỏi nhóm không?");
+                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Xử lý khi người dùng nhấn OK
+                        viewInterface.deleteMember(chatId, userModel.getId());
+                        dialog.dismiss(); // Đóng dialog
+                    }
+                });
+
+                // Nút "Hủy"
+                alertDialogBuilder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Xử lý khi người dùng nhấn Hủy
+                        dialog.dismiss(); // Đóng dialog
+                    }
+                });
+                // Tạo AlertDialog từ AlertDialogBuilder
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // Hiển thị AlertDialog
+                alertDialog.show();
                 });
         }
 

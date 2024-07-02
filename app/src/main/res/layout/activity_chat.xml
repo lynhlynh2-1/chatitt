@@ -76,6 +76,18 @@
         android:padding="@dimen/_4sdp"
         android:src="@drawable/round_search"
         app:layout_constraintBottom_toBottomOf="@+id/container_name"
+        app:layout_constraintEnd_toStartOf="@+id/call_btn"
+        app:layout_constraintTop_toTopOf="@+id/container_name"
+        app:tint="@color/md_theme_light_onSurfaceVariant" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/call_btn"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:padding="@dimen/_4sdp"
+        android:src="@drawable/ic_phone"
+        app:layout_constraintBottom_toBottomOf="@+id/container_name"
         app:layout_constraintEnd_toStartOf="@+id/imageInfo"
         app:layout_constraintTop_toTopOf="@+id/container_name"
         app:tint="@color/md_theme_light_onSurfaceVariant" />
@@ -278,7 +290,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_48sdp"
                 android:background="@drawable/background_chat_input"
                 android:backgroundTint="@color/md_theme_dark_onSurface"
                 android:hint="@string/type_a_message"
@@ -292,7 +304,6 @@
                 android:paddingTop="@dimen/_12sdp"
                 android:textColor="@color/md_theme_light_onSurfaceVariant"
                 android:textColorHint="@color/secondary_text"/>
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/send_btn"
                 android:layout_width="@dimen/_40sdp"
@@ -303,6 +314,7 @@
                 android:tint="@color/md_theme_light_onSurfaceVariant"
                 android:layout_gravity="bottom"/>
         </LinearLayout>
+
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/container_img"
@@ -357,4 +369,41 @@
                 android:layout_gravity="bottom"/>
         </LinearLayout>
     </FrameLayout>
+    <RelativeLayout
+        android:id="@+id/parent_layout"
+        android:elevation="@dimen/_5sdp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_56sdp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.devlomi.record_view.RecordView
+            android:id="@+id/record_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@id/record_button"
+            app:counter_time_color="#ff0000"
+            app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+            app:slide_to_cancel_arrow_color="#000000"
+            app:slide_to_cancel_bounds="8dp"
+            app:slide_to_cancel_margin_right="10dp"
+            app:slide_to_cancel_text="Vuốt để hủy" />
+
+        <com.devlomi.record_view.RecordButton
+            android:id="@+id/record_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/recv_bg_mic"
+            android:scaleType="centerInside"
+            app:mic_icon="@drawable/recv_ic_mic_white" />
+
+
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

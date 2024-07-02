@@ -1,5 +1,6 @@
 package com.example.chatitt.chats.chat.view;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.example.chatitt.ultilities.Constants.TAG;
 import static com.example.chatitt.ultilities.Helpers.showToast;
 
@@ -8,14 +9,21 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.transition.AutoTransition;
@@ -28,6 +36,12 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.devlomi.record_view.OnRecordClickListener;
+import com.devlomi.record_view.OnRecordListener;
+import com.devlomi.record_view.RecordButton;
+import com.devlomi.record_view.RecordPermissionHandler;
+import com.devlomi.record_view.RecordView;
+import com.example.chatitt.MainActivity;
 import com.example.chatitt.R;
 import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.chats.chat.presenter.ChatContract;
@@ -53,7 +67,9 @@ import com.google.firebase.storage.UploadTask;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -79,19 +95,24 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     private String group_name;
     private String encodedImage;
     private Uri imageUri;
-
+    private MediaRecorder mediaRecorder;
+    private String audioPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        Helpers.setupUI(binding.getRoot(),this);
+//        Helpers.setupUI(binding.getRoot(),this);
+
+        binding.recordButton.setRecordView(binding.recordView);
+        binding.recordButton.setListenForRecord(false);
 
         init();
         setListener();
     }
     private void init(){
+
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatPresenter = new ChatPresenter(this, preferenceManager);
 
@@ -155,6 +176,118 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         binding.imageBack.setOnClickListener(v->{
             onBackPressed();
         });
+
+        binding.recordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
+                    binding.recordButton.setListenForRecord(true);
+                }else
+                    ActivityCompat.requestPermissions(ChatActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, Constants.RECORDING_REQUEST_CODE);
+            }
+        });
+        binding.recordView.setRecordPermissionHandler(new RecordPermissionHandler() {
+            @Override
+            public boolean isPermissionGranted() {
+
+                boolean recordPermissionAvailable = ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO) == PERMISSION_GRANTED;
+                if (recordPermissionAvailable) {
+                    return true;
+                }
+
+                ActivityCompat.
+                        requestPermissions(ChatActivity.this,
+                                new String[]{Manifest.permission.RECORD_AUDIO},
+                                0);
+
+                return false;
+
+            }
+        });
+        binding.recordView.setOnRecordListener(new OnRecordListener() {
+            @Override
+            public void onStart() {
+                //Start Recording..
+                binding.containerInput.setVisibility(View.INVISIBLE);
+                Log.d("RecordView", "onStart");
+
+                setUpRecording();
+                try {
+                    mediaRecorder.prepare();
+                    mediaRecorder.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                //On Swipe To Cancel
+                Log.d("RecordView", "onCancel");
+
+                binding.containerInput.setVisibility(View.VISIBLE);
+
+                mediaRecorder.reset();
+                mediaRecorder.release();
+                File file = new File(audioPath);
+                if (file.exists())
+                    file.delete();
+
+
+            }
+
+            @Override
+            public void onFinish(long recordTime, boolean limitReached) {
+                //Stop Recording..
+                //limitReached to determine if the Record was finished when time limit reached.
+                Log.d("RecordView", "onFinish");
+
+                binding.containerInput.setVisibility(View.VISIBLE);
+
+                try {
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                sendRecodingMessage(audioPath);
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                //When the record time is less than One Second
+                Log.d("RecordView", "onLessThanSecond");
+
+                binding.containerInput.setVisibility(View.VISIBLE);
+
+                mediaRecorder.reset();
+                mediaRecorder.release();
+
+                File file = new File(audioPath);
+                if (file.exists())
+                    file.delete();
+            }
+
+            @Override
+            public void onLock() {
+                //When Lock gets activated
+                Log.d("RecordView", "onLock");
+            }
+
+        });
+
+//        binding.recordButton.setListenForRecord(false);
+//
+//        //ListenForRecord must be false ,otherwise onClick will not be called
+//        binding.recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(ChatActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+//                Log.d("RecordButton","RECORD BUTTON CLICKED");
+//            }
+//        });
+
         binding.searchBtn.setOnClickListener(v->{
             if (isSearchShow){
                 binding.searchFrame.setVisibility(View.GONE);
@@ -280,10 +413,49 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             }
         });
     }
+    private void sendRecodingMessage(String audioPath) {
+        if (chat == null)
+            Toast.makeText(this, "Gửi tin nhắn văn bản trước", Toast.LENGTH_SHORT).show();
+        else {
+            String chatID = chat.getId();
+
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(chatID + "/Media/Recording/" + preferenceManager.getString(Constants.KEY_USED_ID) + "/" + System.currentTimeMillis());
+            Uri audioFile = Uri.fromFile(new File(audioPath));
+            storageReference.putFile(audioFile).addOnSuccessListener(success -> {
+                Task<Uri> audioUrl = success.getStorage().getDownloadUrl();
+
+                audioUrl.addOnCompleteListener(path -> {
+                    if (path.isSuccessful()) {
+
+                        String url = path.getResult().toString();
+                        if (chat == null) {
+                        } else {
+//                            chatPresenter.send(chatID, url, Constants.KEY_TYPE_VOICE, messageList.size());
+                        }
+                    }
+                });
+            });
+        }
+    }
+    private void setUpRecording() {
+
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "ChatMe/Media/Recording");
+
+        if (!file.exists())
+            file.mkdirs();
+        audioPath = file.getAbsolutePath() + File.separator + System.currentTimeMillis() + ".3gp";
+
+        mediaRecorder.setOutputFile(audioPath);
+    }
 
     private void send(String content, String type) {
             if (chat!=null){
-                chatPresenter.send(chat.getId(), content, chat.getType_chat(),  type, messageList.size());
+                chatPresenter.send(chat.getId(), content, type, messageList.size());
             }else if (userModel != null){
                 ArrayList<String> mems = new ArrayList<>();
                 mems.add(userModel.getId());
@@ -323,7 +495,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
                         public void onSuccess(Uri uri) {
                             encodedImage = uri.toString();
                             if (chat!=null){
-                                chatPresenter.send(chat.getId(), encodedImage, chat.getType_chat(),  Constants.KEY_TYPE_IMAGE, messageList.size());
+                                chatPresenter.send(chat.getId(), encodedImage,  Constants.KEY_TYPE_IMAGE, messageList.size());
                             }else if (userModel != null){
                                 ArrayList<String> mems = new ArrayList<>();
                                 mems.add(userModel.getId());
@@ -381,7 +553,8 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 //        chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chatNoLastMessObj.getType(), secretKey, this)
 
         binding.textName.setText(name);
-        binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(avatar));
+        if (chat.getAvatar() != null && !chat.getAvatar().isEmpty())
+            binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(avatar));
         binding.textOnline.setText(Objects.equals(online, true) ? "Đang hoạt động": "Ngoại tuyến");
         binding.textOnline.setTextColor(Objects.equals(online, true) ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
 //        showToast(getApplicationContext(), "Thông tin nhóm vừa được thay đổi!");
@@ -605,7 +778,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         if (chat1.getName() != null ){
             binding.textName.setText(chat1.getName());
         }
-        if (chat1.getAvatar()!= null){
+        if (chat1.getAvatar()!= null && !chat1.getAvatar().isEmpty()){
             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat1.getAvatar()));
         }
 //        else if (chatNoLastMessObj!= null){

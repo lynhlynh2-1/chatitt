@@ -60,11 +60,10 @@ public class MemActivityPresenter {
                             list.add(chat.getLeader());
                             getUserInforAndListener(list);
                         }
-                        if (chat.getMembers().size() + 1 == userModelList.size()){
-                            return;
-                        }else if (chat.getMembers().size() + 1 > userModelList.size()){
+                        if (chat.getMembers().size() + 1 > userModelList.size()){
                             //Add Mem
-                            int oldSize = userModelList.size();
+                            int oldSize = userModelList.size() == 0 ? 0 : userModelList.size() - 1;
+
                             int newSize = chat.getMembers().size();
                             List<String> userIDList = new ArrayList<>();
                             for (int i = oldSize; i < newSize; i++) {
@@ -72,12 +71,21 @@ public class MemActivityPresenter {
                                 userIDList.add(userId);
                             }
                             getUserInforAndListener(userIDList);
-                        }else{
+                        }else if (chat.getMembers().size() + 1 < userModelList.size()){
                             //Del Mem
                             int i = 0;
+                            int j = 0;
                             for (User user : userModelList){
-                                if (user.getId().equals(chat.getMembers().get(i))){
+                                if (j == 0) {
+                                    j++;
+                                    continue;
+                                }
+                                if (i == chat.getMembers().size()){
                                     i ++;
+                                    break;
+                                }
+                                if (user.getId().equals(chat.getMembers().get(i))){
+                                    i++;
                                 }else {
                                     break;
                                 }
@@ -89,10 +97,10 @@ public class MemActivityPresenter {
                 });
     }
     public void addMember (String chatId, List<String> user_id){
-
-        db.collection(Constants.KEY_COLLECTION_CHAT)
+        for (String item : user_id)
+            db.collection(Constants.KEY_COLLECTION_CHAT)
                 .document(chatId)
-                .update(Constants.KEY_MEMBERS, FieldValue.arrayUnion(user_id));
+                .update(Constants.KEY_MEMBERS, FieldValue.arrayUnion(item));
 //                .addOnCompleteListener(new OnCompleteListener<Void>() {
 //                    @Override
 //                    public void onComplete(@NonNull Task<Void> task) {
@@ -148,8 +156,8 @@ public class MemActivityPresenter {
     public void getMember(Chat chat){
         userModelList.clear();
         viewInterface.resetAdapter();
-        List<String> userIDList = new ArrayList<>(chat.getMembers());
-        userIDList.add(chat.getLeader());
+        List<String> userIDList = new ArrayList<>();
+        userIDList.add(0, chat.getLeader());
         getUserInforAndListener(userIDList);
     }
 
@@ -158,30 +166,13 @@ public class MemActivityPresenter {
         for(String userId : userIDList){
             db.collection(Constants.KEY_COLLECTION_USERS)
                     .document(userId)
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot v) {
-                            User user = v.toObject(User.class);
-                            userModelList.add(user);
-                            viewInterface.onGetMemberSuccess(user);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            viewInterface.onGetMemberError();
-                        }
-                    });
-            db.collection(Constants.KEY_COLLECTION_USERS)
-                    .document(userId)
-                    .addSnapshotListener((v,err)->{
+                    .addSnapshotListener((value,err)->{
                         if (err != null) {
                             Log.w(TAG, "Listen failed.", err);
                             return;
                         }
-                        if (v != null && v.exists()){
-                            User user = v.toObject(User.class);
+                        if (value != null && value.exists()){
+                            User user = value.toObject(User.class);
                             int i = 0;
                             for (User userr : userModelList){
                                 if (userr.getId().equals(user.getId())){
@@ -189,10 +180,33 @@ public class MemActivityPresenter {
                                 }
                                 i ++;
                             }
-                            userModelList.set(i, user);
-                            viewInterface.onMemInfoChangeSuccess(i);
+                            if(i >= userModelList.size()){
+                                userModelList.add(user);
+                                viewInterface.onGetMemberSuccess(user);
+                            }else {
+                                userModelList.set(i, user);
+                                viewInterface.onMemInfoChangeSuccess(i);
+                            }
                         }
                     });
+//                    .get()
+//                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                        @Override
+//                        public void onSuccess(DocumentSnapshot v) {
+//                            db.collection(Constants.KEY_COLLECTION_USERS)
+//                                    .document(userId)
+//
+//
+//
+//                        }
+//                    })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            viewInterface.onGetMemberError();
+//                        }
+//                    });
+
         }
     }
 }
