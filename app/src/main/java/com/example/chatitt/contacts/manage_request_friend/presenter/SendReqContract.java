@@ -8,7 +8,7 @@ public class SendReqContract {
     }
     public interface ViewInterface {
         void getSendReqSuccess(User tempUser);
-        void getSendReqFail();
+        void getSendReqEmpty();
 
         void delReqFail();
 

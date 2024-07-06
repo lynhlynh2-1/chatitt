@@ -47,6 +47,9 @@ public class SendReqPresenter {
                     }
                     if (v != null && v.exists()){
                         User tempUser = v.toObject(User.class);
+                        if (tempUser.getMy_friend_request() == null || tempUser.getMy_friend_request().size() == 0){
+                            viewInterface.getSendReqEmpty();
+                        }
 
                         if (tempUser.getMy_friend_request().size() > userModelList.size()){
                             //Add My Req

@@ -68,10 +68,12 @@ public class SendReqFragment extends Fragment implements SendReqContract.ViewInt
     }
 
     @Override
-    public void getSendReqFail() {
+    public void getSendReqEmpty() {
         binding.swipeLayout.setRefreshing(false);
         binding.progressBar.setVisibility(View.GONE);
-        Toast.makeText(requireContext(), "Lấy dữ liệu fail", Toast.LENGTH_SHORT).show();
+        userModelList.clear();
+        adapter.notifyDataSetChanged();
+        Toast.makeText(requireContext(), "Danh sách trống", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -47,7 +47,9 @@ public class ReceiveReqPresenter {
                     }
                     if (v != null && v.exists()){
                         User tempUser = v.toObject(User.class);
-
+                        if (tempUser.getOther_request_friend() == null || tempUser.getOther_request_friend().size() == 0){
+                            viewInterface.getReceiveReqEmpty();
+                        }
                         if (tempUser.getOther_request_friend().size() > userModelList.size()){
                             //Add My Req
                             int oldSize = userModelList.size();

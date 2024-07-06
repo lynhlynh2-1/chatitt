@@ -9,7 +9,7 @@ public class ReceiveReqContract {
     public interface ViewInterface {
         void getReceiveReqSuccess(User newUser);
         void getReceiveReqFail();
-
+        void getReceiveReqEmpty();
         void setAcceptSuccess(String status, int pos);
 
         void setAcceptFail();

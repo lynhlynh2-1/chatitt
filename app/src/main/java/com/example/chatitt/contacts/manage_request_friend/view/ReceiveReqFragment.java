@@ -70,6 +70,15 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
     }
 
     @Override
+    public void getReceiveReqEmpty() {
+        binding.swipeLayout.setRefreshing(false);
+        binding.progressBar.setVisibility(View.GONE);
+        userModelList.clear();
+        adapter.notifyDataSetChanged();
+        Toast.makeText(requireContext(), "Danh sách trống", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void setAcceptSuccess(String status, int pos) {
         userModelList.remove(pos);
         presenter.getReceiveReq();
