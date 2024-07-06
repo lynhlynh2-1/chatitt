@@ -109,19 +109,37 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void setData(Message chatMessage, int position) {
             String content = chatMessage.getContent();
 
-            if (Objects.equals(chatMessage.getType_msg(), Constants.KEY_TYPE_TEXT)){
-                binding.textMessage.setText(content);
-            }else {
-                binding.textMessage.setVisibility(View.GONE);
-                binding.imgChat.setVisibility(View.VISIBLE);
-//                binding.imgChat.setImageBitmap(getBitmapFromEncodedString(content));
-                Picasso.get().load(Uri.parse(content)).into(binding.imgChat);
-                binding.imgChat.setOnClickListener(view -> {
-                    viewInterface.onShowImageClick(content);
-                });
+//            if (Objects.equals(chatMessage.getType_msg(), Constants.KEY_TYPE_TEXT)){
+//                binding.textMessage.setText(content);
+//            }else {
+//                binding.textMessage.setVisibility(View.GONE);
+//                binding.imgChat.setVisibility(View.VISIBLE);
+////                binding.imgChat.setImageBitmap(getBitmapFromEncodedString(content));
+//                Picasso.get().load(Uri.parse(content)).into(binding.imgChat);
+//                binding.imgChat.setOnClickListener(view -> {
+//                    viewInterface.onShowImageClick(content);
+//                });
+//            }
 
+            switch (chatMessage.getType_msg()){
+                case Constants.KEY_TYPE_TEXT:
+                    binding.textMessage.setText(content);
+                    break;
+                case Constants.KEY_TYPE_IMAGE:
+                    binding.textMessage.setVisibility(View.GONE);
+                    binding.imgChat.setVisibility(View.VISIBLE);
+//                    binding.imgChat.setImageBitmap(getBitmapFromEncodedString(content));
+                    Picasso.get().load(Uri.parse(content)).into(binding.imgChat);
+                    binding.imgChat.setOnClickListener(view -> {
+                        viewInterface.onShowImageClick(content);
+                    });
+                    break;
+                case Constants.KEY_TYPE_VOICE:
+                    binding.textMessage.setVisibility(View.GONE);
+                    binding.voicePlayerView.setVisibility(View.VISIBLE);
+                    binding.voicePlayerView.setAudio(content);
+                    break;
             }
-
             if (Objects.equals(chatMessage.getIsSending(), "2")){
                 binding.textTime.setVisibility(View.VISIBLE);
                 binding.textTime.setText("Đã gửi");
@@ -166,17 +184,24 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             binding.textName.setText(chatMessage.getSenderName());
             binding.textName.setVisibility(View.VISIBLE);
 
-
-            if (Objects.equals(chatMessage.getType_msg(), Constants.KEY_TYPE_TEXT)){
-                binding.textMessage.setText(content);
-            }else {
-                binding.textMessage.setVisibility(View.GONE);
-                binding.imgChat.setVisibility(View.VISIBLE);
-//                binding.imgChat.setImageBitmap(getBitmapFromEncodedString(content));
-                Picasso.get().load(Uri.parse(content)).into(binding.imgChat);
-                binding.imgChat.setOnClickListener(view -> {
-                    viewInterface.onShowImageClick(content);
-                });
+            switch (chatMessage.getType_msg()){
+                case Constants.KEY_TYPE_TEXT:
+                    binding.textMessage.setText(content);
+                    break;
+                case Constants.KEY_TYPE_IMAGE:
+                    binding.textMessage.setVisibility(View.GONE);
+                    binding.imgChat.setVisibility(View.VISIBLE);
+//                    binding.imgChat.setImageBitmap(getBitmapFromEncodedString(content));
+                    Picasso.get().load(Uri.parse(content)).into(binding.imgChat);
+                    binding.imgChat.setOnClickListener(view -> {
+                        viewInterface.onShowImageClick(content);
+                    });
+                    break;
+                case Constants.KEY_TYPE_VOICE:
+                    binding.textMessage.setVisibility(View.GONE);
+                    binding.voicePlayerView.setVisibility(View.VISIBLE);
+                    binding.voicePlayerView.setAudio(content);
+                    break;
             }
 
             binding.imageProfile.setImageBitmap(getBitmapFromEncodedString(chatMessage.getSenderImage()));

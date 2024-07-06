@@ -13,5 +13,9 @@ public class ReceiveReqContract {
         void setAcceptSuccess(String status, int pos);
 
         void setAcceptFail();
+
+        void onDelReqSuccess(int i);
+
+        void onUserInfoChangeSuccess(int i);
     }
 }

@@ -53,6 +53,7 @@ import com.example.chatitt.chats.individual_chat.info.view.PrivateChatInfoActivi
 import com.example.chatitt.databinding.ActivityChatBinding;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
+import com.example.chatitt.ultilities.Permissions;
 import com.example.chatitt.ultilities.PreferenceManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -64,6 +65,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -97,6 +99,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     private Uri imageUri;
     private MediaRecorder mediaRecorder;
     private String audioPath;
+    private Permissions permissions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         setListener();
     }
     private void init(){
-
+        permissions = new Permissions();
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatPresenter = new ChatPresenter(this, preferenceManager);
 
@@ -177,15 +180,16 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             onBackPressed();
         });
 
-        binding.recordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
-                    binding.recordButton.setListenForRecord(true);
-                }else
-                    ActivityCompat.requestPermissions(ChatActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, Constants.RECORDING_REQUEST_CODE);
-            }
-        });
+        binding.recordButton.setOnClickListener(view -> {
+            if (chat.getId() != null) {
+                if (permissions.isRecordingOk(ChatActivity.this))
+                    if (permissions.isStorageOk(ChatActivity.this))
+                        binding.recordButton.setListenForRecord(true);
+                    else permissions.requestStorage(ChatActivity.this);
+                else permissions.requestRecording(ChatActivity.this);
+            } else {
+                Toast.makeText(ChatActivity.this, "Gửi tin nhắn văn bản trước khi thực hiện tác vụ này!!!", Toast.LENGTH_SHORT).show();
+            }        });
         binding.recordView.setRecordPermissionHandler(new RecordPermissionHandler() {
             @Override
             public boolean isPermissionGranted() {
@@ -247,11 +251,12 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
                 try {
                     mediaRecorder.stop();
                     mediaRecorder.release();
+                    sendRecodingMessage(audioPath);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                sendRecodingMessage(audioPath);
+
             }
 
             @Override
@@ -430,7 +435,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
                         String url = path.getResult().toString();
                         if (chat == null) {
                         } else {
-//                            chatPresenter.send(chatID, url, Constants.KEY_TYPE_VOICE, messageList.size());
+                            chatPresenter.send(chatID, url, Constants.KEY_TYPE_VOICE, messageList.size());
                         }
                     }
                 });
@@ -442,15 +447,18 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "ChatMe/Media/Recording");
+//        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "ChatMe/Media/Recording");
+//
+//        if (!file.exists())
+//            file.mkdirs();
+//        audioPath = file.getAbsolutePath() + File.separator + System.currentTimeMillis() + ".3gp";
 
-        if (!file.exists())
-            file.mkdirs();
-        audioPath = file.getAbsolutePath() + File.separator + System.currentTimeMillis() + ".3gp";
-
+        audioPath = getExternalCacheDir().getAbsolutePath();
+        audioPath += File.separator + System.currentTimeMillis() + ".3gp";
         mediaRecorder.setOutputFile(audioPath);
+
     }
 
     private void send(String content, String type) {
@@ -794,5 +802,40 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 //            chatPresenter.leaveChat(preferenceManager.getString(Constants.KEY_NAME),chat.getId());
 //        }else if ( chatNoLastMessObj != null)
 //            chatPresenter.leaveChat(preferenceManager.getString(Constants.KEY_NAME),chatNoLastMessObj.getId());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+//            case PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS:
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    getGalleryImage();
+//                } else {
+//                    Toast.makeText(this, "Approve permissions to open Pix ImagePicker", Toast.LENGTH_LONG).show();
+//                }
+//
+//                break;
+
+            case Constants.RECORDING_REQUEST_CODE:
+                if (grantResults[0] == PERMISSION_GRANTED) {
+                    if (this.permissions.isStorageOk(ChatActivity.this))
+                        binding.recordButton.setListenForRecord(true);
+                    else this.permissions.requestStorage(ChatActivity.this);
+
+                } else
+                    Toast.makeText(this, "Recording permission denied", Toast.LENGTH_SHORT).show();
+                break;
+            case Constants.STORAGE_REQUEST_CODE:
+
+                if (grantResults[0] == PERMISSION_GRANTED)
+                    binding.recordButton.setListenForRecord(true);
+                else
+                    Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+                break;
+
+
+        }
     }
 }

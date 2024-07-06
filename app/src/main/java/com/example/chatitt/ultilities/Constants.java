@@ -65,13 +65,14 @@ public class Constants {
 //    public static final UserGroup userCurrent = new UserGroup();
     public static final String REMOTE_MSG_REGISTRATION_IDS = "registration_ids";
     public static final String FRIEND_LIST = "friend_list";
-    public static final String MY_REQ_FRIEND_LIST = "friend_list";
-    public static final String OTHER_REQ_FRIEND_LIST = "friend_list";
+    public static final String MY_REQ_FRIEND_LIST = "my_friend_request";
+    public static final String OTHER_REQ_FRIEND_LIST = "other_request_friend";
     public static final String KEY_CONTENT = "content";
     public static final String KEY_TYPE_CHAT = "type_chat";
     public static final String KEY_TYPE_MSG = "type_msg";
     public static final String KEY_ID = "id";
     public static final int RECORDING_REQUEST_CODE = 123;
+    public static final int STORAGE_REQUEST_CODE = 456;
 
 
     public static HashMap<String, String> remotoMsgHeaders = null;

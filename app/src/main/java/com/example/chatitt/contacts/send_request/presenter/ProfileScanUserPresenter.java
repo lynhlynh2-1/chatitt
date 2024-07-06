@@ -9,6 +9,7 @@ import com.example.chatitt.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -62,10 +63,9 @@ public class ProfileScanUserPresenter {
                                 if (you.getFriend_list() != null && you.getFriend_list().contains(preferenceManager.getString(Constants.KEY_USED_ID))){
                                     status = Constants.KEY_IS_FRIEND;
                                 }else if (you.getMy_friend_request() != null && you.getMy_friend_request().contains(preferenceManager.getString(Constants.KEY_USED_ID))){
-                                    status = Constants.KEY_MY_REQ_FRIEND;
-
-                                }else if (you.getOther_request_friend() != null && you.getOther_request_friend().contains(preferenceManager.getString(Constants.KEY_USED_ID))){
                                     status = Constants.KEY_OTHER_REQ_FRIEND;
+                                }else if (you.getOther_request_friend() != null && you.getOther_request_friend().contains(preferenceManager.getString(Constants.KEY_USED_ID))){
+                                    status = Constants.KEY_MY_REQ_FRIEND;
                                 }
                                 viewInterface.getStatusFriendSuccess();
                             }else
@@ -75,6 +75,13 @@ public class ProfileScanUserPresenter {
     }
 
     public void setReqFriend(String userId){
+
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                .update(Constants.MY_REQ_FRIEND_LIST, FieldValue.arrayUnion(userId));
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(userId)
+                .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayUnion(preferenceManager.getString(Constants.KEY_USED_ID)));
 //        APIServices.apiServices.setRequestFriend("Bearer "+token, userId)
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -103,6 +110,20 @@ public class ProfileScanUserPresenter {
     }
 
     public void setAcceptFriend(String userId, String status){
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                .update(Constants.FRIEND_LIST, FieldValue.arrayUnion(userId));
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(userId)
+                .update(Constants.FRIEND_LIST, FieldValue.arrayUnion(preferenceManager.getString(Constants.KEY_USED_ID)));
+
+        //
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayRemove(userId));
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(userId)
+                .update(Constants.MY_REQ_FRIEND_LIST, FieldValue.arrayRemove(preferenceManager.getString(Constants.KEY_USED_ID)));
 //        APIServices.apiServices.setAccept("Bearer "+token, userId,status)
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -130,6 +151,13 @@ public class ProfileScanUserPresenter {
     }
 
     public void delReq(String userId){
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                .update(Constants.MY_REQ_FRIEND_LIST, FieldValue.arrayRemove(userId));
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(userId)
+                .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayRemove(preferenceManager.getString(Constants.KEY_USED_ID)));
+
 //        APIServices.apiServices.delRequest("Bearer "+ token, userId)
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())

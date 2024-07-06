@@ -124,6 +124,7 @@ public class ChatListPresenter {
                                 modifiedChat.setLastMessage(chat.getLastMessage());
                                 modifiedChat.setSenderName(chat.getSenderName());
                                 modifiedChat.setTimestamp(chat.getTimestamp());
+                                modifiedChat.setType_msg(chat.getType_msg());
                                 chatList.sort((o1,o2)-> o2.getTimestamp().compareTo(o1.getTimestamp()));
                                 viewInterface.notifyChatMove(chatIndex,0);
                             }

@@ -3,8 +3,10 @@ package com.example.chatitt.chats.chat_list.view;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import com.example.chatitt.databinding.ItemContainerRecentConversionBinding;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Objects;
@@ -75,13 +78,19 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
             }else {
                 binding.imageStatus.setColorFilter(Color.rgb(255,165,0));
             }
-            String content;
+            String content = "";
             String sender = chat.getSenderName();
             if (Objects.equals(sender, preferenceManager.getString(Constants.KEY_NAME))) sender = "Bạn";
-            if (Objects.equals(chat.getType_msg(), Constants.KEY_TYPE_IMAGE)){
-                content = sender + ": Hình ảnh";
-            }else {
-                content = sender + ": " + chat.getLastMessage();
+            switch (chat.getType_msg()){
+                case Constants.KEY_TYPE_TEXT:
+                    content = sender + ": " + chat.getLastMessage();
+                    break;
+                case Constants.KEY_TYPE_IMAGE:
+                    content = sender + ": Hình ảnh";
+                    break;
+                case Constants.KEY_TYPE_VOICE:
+                    content = sender + ": Ghi âm";
+                    break;
             }
 
             if (chat.getAvatar() != null){

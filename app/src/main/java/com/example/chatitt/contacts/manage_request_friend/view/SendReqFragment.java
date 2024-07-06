@@ -58,10 +58,12 @@ public class SendReqFragment extends Fragment implements SendReqContract.ViewInt
 
     @Override
     public void getSendReqSuccess(User tempUser) {
+        binding.recyclerview.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.GONE);
         binding.swipeLayout.setRefreshing(false);
+        binding.textErrorMessage.setVisibility(View.GONE);
         userModelList.add(tempUser);
         adapter.notifyItemInserted(userModelList.size() - 1);
-        binding.progressBar.setVisibility(View.GONE);
 
     }
 
@@ -102,5 +104,28 @@ public class SendReqFragment extends Fragment implements SendReqContract.ViewInt
                 }
             });
         }
+    }
+
+    @Override
+    public void onUserInfoChangeSuccess(int i) {
+        binding.progressBar.setVisibility(View.GONE);
+        adapter.notifyItemChanged(i);
+    }
+
+    @Override
+    public void onDelReqSuccess(int i) {
+        binding.progressBar.setVisibility(View.GONE);
+        binding.recyclerview.setVisibility(View.VISIBLE);
+        userModelList.remove(i);
+        adapter.notifyItemRemoved(i);
+    }
+
+    @Override
+    public void onGetSendReqError() {
+        binding.recyclerview.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.GONE);
+        binding.swipeLayout.setRefreshing(false);
+        binding.textErrorMessage.setText("Lỗi khi lấy dữ liệu, vui lòng thử lại!");
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
     }
 }

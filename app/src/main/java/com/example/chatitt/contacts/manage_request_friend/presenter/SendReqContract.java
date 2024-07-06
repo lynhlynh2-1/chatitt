@@ -13,5 +13,12 @@ public class SendReqContract {
         void delReqFail();
 
         void delReqSuccess(int pos);
+
+        void onUserInfoChangeSuccess(int i);
+
+        void onDelReqSuccess(int i);
+
+
+        void onGetSendReqError();
     }
 }

@@ -50,24 +50,23 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
         return rootView;
     }
 
-    private void setListener(){
-
-    }
-
     @Override
     public void getReceiveReqSuccess(User newUser) {
+        binding.recyclerview.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.GONE);
         binding.swipeLayout.setRefreshing(false);
+        binding.textErrorMessage.setVisibility(View.GONE);
         userModelList.add(newUser);
         adapter.notifyItemInserted(userModelList.size() - 1);
-        binding.progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void getReceiveReqFail() {
-        binding.swipeLayout.setRefreshing(false);
-
+        binding.recyclerview.setVisibility(View.VISIBLE);
         binding.progressBar.setVisibility(View.GONE);
-        Toast.makeText(requireContext(), "Lấy dữ liệu fail", Toast.LENGTH_SHORT).show();
+        binding.swipeLayout.setRefreshing(false);
+        binding.textErrorMessage.setText("Lỗi khi lấy dữ liệu, vui lòng thử lại!");
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -102,6 +101,20 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
                 }
             });
         }
+    }
+
+    @Override
+    public void onDelReqSuccess(int i) {
+        binding.progressBar.setVisibility(View.GONE);
+        binding.recyclerview.setVisibility(View.VISIBLE);
+        userModelList.remove(i);
+        adapter.notifyItemRemoved(i);
+    }
+
+    @Override
+    public void onUserInfoChangeSuccess(int i) {
+        binding.progressBar.setVisibility(View.GONE);
+        adapter.notifyItemChanged(i);
     }
 
 }

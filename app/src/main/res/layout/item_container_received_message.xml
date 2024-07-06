@@ -56,7 +56,7 @@
                 android:paddingBottom="@dimen/_8sdp"
                 android:textColor="@color/md_theme_light_onSurfaceVariant"
                 android:text="1111111111111111111111111111111111111111111111"
-                android:textSize="@dimen/_13ssp" />
+                android:textSize="@dimen/_13ssp"/>
 
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -70,6 +70,28 @@
                 android:maxWidth="@dimen/_120sdp"
                 android:visibility="gone"
                 app:shapeAppearanceOverlay="@style/card" />
+
+            <me.jagar.chatvoiceplayerlibrary.VoicePlayerView
+                android:id="@+id/voicePlayerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:enableVisualizer="true"
+                app:visualizationPlayedColor="#ff7700"
+                app:visualizationNotPlayedColor="#727171"
+                app:playPauseBackgroundColor="#ff7700"
+                app:timingBackgroundColor="#6AFF7700"
+                app:seekBarProgressColor="@color/md_theme_light_onSurfaceVariant"
+                app:showShareButton="false"
+                app:shareCornerRadius="100"
+                app:playPauseCornerRadius="100"
+                app:showTiming="true"
+                app:viewCornerRadius="100"
+                app:viewBackground="@color/bg_main"
+                app:progressTimeColor="#000"
+                app:seekBarThumbColor="#FFC107"
+                app:shareBackgroundColor="#ff7700"
+                app:playProgressbarColor="#ff7700"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <TextView

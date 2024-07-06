@@ -20,6 +20,12 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:padding="@dimen/_10sdp"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <TextView
+    android:id="@+id/textErrorMessage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:visibility="gone"/>
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

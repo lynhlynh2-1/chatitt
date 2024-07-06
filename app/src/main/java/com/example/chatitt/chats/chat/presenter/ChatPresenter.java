@@ -224,23 +224,20 @@ public class ChatPresenter {
         msg.put(Constants.KEY_ID, messRef);
 
         messRef.set(msg)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put(Constants.KEY_TYPE_MSG, typeMess);
-                        data.put(Constants.KEY_LAST_MESSAGE, content);
-                        data.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
-                        data.put(Constants.KEY_TIMESTAMP, Helpers.getNow());
-                        db.collection(Constants.KEY_COLLECTION_CHAT).document(chatId)
-                                .update(data)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        viewInterface.onSendSuccess(content, typeMess, pos);
-                                    }
-                                });
-                    }
+                .addOnSuccessListener(unused -> {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put(Constants.KEY_TYPE_MSG, typeMess);
+                    data.put(Constants.KEY_LAST_MESSAGE, content);
+                    data.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
+                    data.put(Constants.KEY_TIMESTAMP, Helpers.getNow());
+                    db.collection(Constants.KEY_COLLECTION_CHAT).document(chatId)
+                            .update(data)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    viewInterface.onSendSuccess(content, typeMess, pos);
+                                }
+                            });
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
