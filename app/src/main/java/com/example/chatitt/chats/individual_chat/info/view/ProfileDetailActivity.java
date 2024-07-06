@@ -50,31 +50,24 @@ public class ProfileDetailActivity extends AppCompatActivity implements Contract
         userModel = presenter.getUser();
 
         binding.textName.setText(userModel.getName());
-        preferenceManager.putString(Constants.KEY_NAME,userModel.getName());
 
         binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
         if (userModel.getCoverImage() != null){
-            preferenceManager.putString(Constants.KEY_COVERIMAGE, userModel.getCoverImage());
             binding.coverImg.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getCoverImage()));
         }
         if (userModel.getBirthday() != null){
-            preferenceManager.putString(Constants.KEY_BIRTHDAY, userModel.getBirthday());
             binding.textBirthday.setText(userModel.getBirthday());
             binding.textBirthday.setVisibility(View.VISIBLE);
         }else {
             binding.textBirthday.setVisibility(View.GONE);
         }
         if (userModel.getGender() != null){
-            preferenceManager.putString(Constants.KEY_GENDER, userModel.getGender());
             binding.textGender.setText(userModel.getGender());
             binding.textGender.setVisibility(View.VISIBLE);
         }else {
             binding.textGender.setVisibility(View.GONE);
         }
         if (userModel.getCity() != null){
-            preferenceManager.putString(Constants.KEY_ADDRESS_CITY, userModel.getCity());
-            preferenceManager.putString(Constants.KEY_ADDRESS_COUNTRY, userModel.getCountry());
-            preferenceManager.putString(Constants.KEY_ADDRESS_DETAIL, userModel.getAddress());
             String city = userModel.getCity()+" (" + userModel.getCountry()+")";
             binding.textCity.setText(city);
             binding.textAddressDetail.setText(userModel.getAddress());
@@ -83,12 +76,9 @@ public class ProfileDetailActivity extends AppCompatActivity implements Contract
             binding.textAddressDetail.setText("Không rõ");
         }
 
-        preferenceManager.putString(Constants.KEY_EMAIL, userModel.getEmail());
         binding.textEmail.setText(userModel.getEmail());
 
         if (userModel.getEmail() != null){
-            preferenceManager.putString(Constants.KEY_PHONE,userModel.getPhonenumber());
-
             binding.textPhone.setText(userModel.getPhonenumber());
             binding.textPhone.setVisibility(View.VISIBLE);
         }else {
