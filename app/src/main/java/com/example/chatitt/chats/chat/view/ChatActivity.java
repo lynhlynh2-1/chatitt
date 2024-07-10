@@ -792,7 +792,8 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     @Override
     protected void onResume() {
         super.onResume();
-        chatPresenter.updateOnlineStatus(chat.getId(),true);
+        if(chat != null)
+            chatPresenter.updateOnlineStatus(chat.getId(),true);
         Chat chat1 = chatPresenter.getChat();
         if (chat1.getName() != null && !chat1.getName().isEmpty() ){
             if (chat1.getName().equals("Han")){
