@@ -135,6 +135,38 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
     }
 
     @Override
+    public void onActionFail() {
+
+    }
+
+    @Override
+    public void getListFriendEmpty() {
+        binding.swipeLayout.setRefreshing(false);
+        binding.shimmerEffect.setVisibility(View.GONE);
+        userModelList.clear();
+        adapter.notifyDataSetChanged();
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setText("Danh sách trống");
+    }
+
+
+    @Override
+    public void onGetFriendSuccess(User user) {
+        binding.usersRecyclerView.setVisibility(View.VISIBLE);
+        binding.shimmerEffect.setVisibility(View.GONE);
+        binding.swipeLayout.setRefreshing(false);
+        binding.textErrorMessage.setVisibility(View.GONE);
+        userModelList.add(user);
+        adapter.notifyItemInserted(userModelList.size() - 1);
+    }
+
+    @Override
+    public void onFriendInfoChangeSuccess(int i) {
+        binding.shimmerEffect.setVisibility(View.GONE);
+        adapter.notifyItemChanged(i);
+    }
+
+    @Override
     public void onSearchUserError() {
         binding.shimmerEffect.stopShimmerAnimation();
         binding.shimmerEffect.setVisibility(View.GONE);
@@ -198,16 +230,20 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
 
     @Override
     public void deleteFriend(String id) {
-
+        createChatPrivatePresenter.deleteFriend(id);
     }
 
     @Override
     public void onDelFriendError() {
+        Helpers.showToast(getApplicationContext(), "Thao tác thất bại!");
 
     }
 
     @Override
-    public void onDelFriendSuccess() {
-
+    public void onDelFriendSuccess(int i) {
+        binding.shimmerEffect.setVisibility(View.GONE);
+        binding.usersRecyclerView.setVisibility(View.VISIBLE);
+        userModelList.remove(i);
+        adapter.notifyItemRemoved(i);
     }
 }

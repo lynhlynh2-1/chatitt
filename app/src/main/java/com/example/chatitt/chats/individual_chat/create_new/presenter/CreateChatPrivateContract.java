@@ -23,10 +23,17 @@ public class CreateChatPrivateContract {
 
         void onDelFriendError();
 
-        void onDelFriendSuccess();
+        void onDelFriendSuccess(int i);
         void onFindChatSucces(String id);
         void onFindChatError();
         void onChatNotExist(User user);
 
+        void onActionFail();
+
+        void getListFriendEmpty();
+
+        void onGetFriendSuccess(User user);
+
+        void onFriendInfoChangeSuccess(int i);
     }
 }

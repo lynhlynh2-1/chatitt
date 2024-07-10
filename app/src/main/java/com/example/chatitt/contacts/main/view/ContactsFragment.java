@@ -188,6 +188,7 @@ public class ContactsFragment extends Fragment implements ContactsContract.ViewI
     public void onSearchUserSuccess() {
         binding.transparentBg.startAnimation(toBottomBgAnim);
         binding.progressBar.setVisibility(View.GONE);
+        binding.editPhone.setText("");
         Intent intent = new Intent(requireContext(), ProfileScanUserActivity.class);
         intent.putExtra("userId", presenter.getUserModels().getId());
         startActivity(intent);

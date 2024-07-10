@@ -74,7 +74,7 @@ public class AddMemAdapter extends RecyclerView.Adapter<AddMemAdapter.ListUserVi
 
             binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
             binding.textName.setText(userModel.getName());
-            binding.textRecentMessage.setText(userModel.getPhonenumber());
+            binding.textRecentMessage.setText(userModel.getEmail());
             binding.textTime.setVisibility(View.GONE);
             binding.checkbox.setVisibility(View.VISIBLE);
 
