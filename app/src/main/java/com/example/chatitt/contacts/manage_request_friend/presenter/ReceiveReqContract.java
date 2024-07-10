@@ -17,5 +17,7 @@ public class ReceiveReqContract {
         void onDelReqSuccess(int i);
 
         void onUserInfoChangeSuccess(int i);
+
+        void onDelReqFailure();
     }
 }

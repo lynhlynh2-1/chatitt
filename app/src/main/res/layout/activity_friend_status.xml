@@ -97,18 +97,161 @@
         app:layout_constraintStart_toStartOf="@+id/you"
         app:layout_constraintTop_toBottomOf="@+id/you" />
 
-    <Button
-        android:id="@+id/send_req_friend"
-        android:layout_width="wrap_content"
+<!--    <Button-->
+<!--        android:id="@+id/send_req_friend"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:paddingLeft="@dimen/_20sdp"-->
+<!--        android:paddingTop="@dimen/_10sdp"-->
+<!--        android:paddingRight="@dimen/_20sdp"-->
+<!--        android:paddingBottom="@dimen/_10sdp"-->
+<!--        android:text="Gửi kết bạn"-->
+<!--        android:textSize="@dimen/_14sdp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/textMe" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/_20sdp"
-        android:paddingTop="@dimen/_10sdp"
-        android:paddingRight="@dimen/_20sdp"
-        android:paddingBottom="@dimen/_10sdp"
-        android:text="Gửi kết bạn"
-        android:textSize="@dimen/_14sdp"
+        android:layout_marginTop="@dimen/_19sdp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textMe" />
+        app:layout_constraintTop_toBottomOf="@+id/textMe">
+
+        <Button
+            android:id="@+id/add_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/_20sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingRight="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="Gửi kết bạn"
+            android:textSize="@dimen/_14sdp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textMe" />
+
+        <Button
+            android:id="@+id/del_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/_20sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingRight="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="Hủy kết bạn"
+            android:backgroundTint="@color/error"
+            android:textSize="@dimen/_14sdp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textMe" />
+
+        <TextView
+            android:id="@+id/textMessage"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:textSize="@dimen/_12ssp"
+            android:gravity="center"
+            android:text="Bạn đã gửi lời mời kết bạn tới họ, hãy để lại tin nhắn trong lúc chờ đợi nhé!"/>
+        <Button
+            android:id="@+id/btn_cancel_req"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_gravity="center"
+            android:layout_weight="2"
+            android:backgroundTint="@color/bg_main"
+            android:textColor="@color/md_theme_light_onSurfaceVariant"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="Hủy lời mời"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold" />
+<!--        <LinearLayout-->
+<!--            android:id="@+id/after_send"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:gravity="center"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:visibility="visible">-->
+
+<!--            <Button-->
+<!--                android:id="@+id/btn_chat1"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="@dimen/_20sdp"-->
+<!--                android:layout_marginTop="@dimen/_10sdp"-->
+<!--                android:layout_marginEnd="@dimen/_10sdp"-->
+<!--                android:layout_marginBottom="@dimen/_10sdp"-->
+<!--                android:layout_weight="2"-->
+<!--                android:drawableLeft="@drawable/ic_message"-->
+<!--                android:drawableTint="@color/white"-->
+<!--                android:paddingTop="@dimen/_10sdp"-->
+<!--                android:paddingBottom="@dimen/_10sdp"-->
+<!--                android:text="Nhắn tin"-->
+<!--                android:textSize="@dimen/_13ssp"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            -->
+
+<!--        </LinearLayout>-->
+        <LinearLayout
+            android:id="@+id/after_receive"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="visible">
+            <Button
+                android:id="@+id/btn_accept"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_weight="2"
+                android:drawableLeft="@drawable/round_check"
+                android:drawableTint="@color/white"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:text="Đồng ý"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_decline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_weight="2"
+                android:backgroundTint="@color/bg_main"
+                android:textColor="@color/md_theme_light_onSurfaceVariant"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:text="Từ chối"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

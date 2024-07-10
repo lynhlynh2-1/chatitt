@@ -253,6 +253,9 @@ public class ProfilePresenter {
     }
 
     public void logOut(){
+        FirebaseFirestore.getInstance().collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                .update(Constants.KEY_ONLINE,false);
         auth.signOut();
     }
 }

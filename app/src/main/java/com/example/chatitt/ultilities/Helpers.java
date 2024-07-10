@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.devlomi.record_view.RecordButton;
 import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.chats.chat_list.model.Chat;
 import com.example.chatitt.chats.chat_list.model.Message;
@@ -34,7 +35,7 @@ public class Helpers {
     public static void setupUI(View view, Activity activity) {
 
         // Set up touch listener for non-text box views to hide keyboard.
-        if (!(view instanceof EditText)) {
+        if (!(view instanceof EditText) && !(view instanceof RecordButton)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
                     hideSoftKeyboard(activity);

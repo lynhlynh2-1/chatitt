@@ -44,7 +44,6 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
     private Animation rotateAntiClockWiseFabAnim;
     private Animation fromBottomBgAnim;
     private Animation toBottomBgAnim;
-    private List<Chat> conversations;
     private RecentConversationsAdapter conversationsAdapter;
     private List<Chat> chatList;
 
@@ -66,8 +65,8 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
         preferenceManager = new PreferenceManager(requireContext());
         chatsPresenter = new ChatListPresenter(this, preferenceManager);
 
-        conversations = new ArrayList<>();
-        conversationsAdapter = new RecentConversationsAdapter(conversations,this, preferenceManager);
+        chatList = new ArrayList<>();
+        conversationsAdapter = new RecentConversationsAdapter(chatList,this, preferenceManager);
         binding.conversationRecycleView.setAdapter(conversationsAdapter);
 
         if (fromBottomFabAnim == null){
@@ -121,10 +120,10 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(!TextUtils.isEmpty(query.trim())){
-                    List<Chat> chatList = Helpers.checkStringChatContain(query, conversations);
-                    conversationsAdapter.reset(chatList);
+                    List<Chat> chats = Helpers.checkStringChatContain(query, chatList);
+                    conversationsAdapter.reset(chats);
                 }else{
-                    conversationsAdapter.reset(conversations);
+                    conversationsAdapter.reset(chatList);
                 }
                 return false;
             }
@@ -133,10 +132,10 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
             public boolean onQueryTextChange(String newText) {
 
                 if(!TextUtils.isEmpty(newText.trim())){
-                    List<Chat> chatList = Helpers.checkStringChatContain(newText, conversations);
-                    conversationsAdapter.reset(chatList);
+                    List<Chat> chats = Helpers.checkStringChatContain(newText, chatList);
+                    conversationsAdapter.reset(chats);
                 }else{
-                    conversationsAdapter.reset(conversations);
+                    conversationsAdapter.reset(chatList);
                 }
                 return false;
             }
@@ -183,8 +182,8 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
     public void onConversionClicked(Chat chat) {
         Intent it = new Intent(requireContext(), ChatActivity.class);
         it.putExtra(Constants.KEY_COLLECTION_CHAT, chat);
-        String receiverId = preferenceManager.getString(Constants.KEY_USED_ID);
-        if (Objects.equals(receiverId, chat.getLeader())){
+        String receiverId = chat.getLeader();
+        if (Objects.equals(receiverId, preferenceManager.getString(Constants.KEY_USED_ID))){
             receiverId = chat.getMembers().get(0);
         }
         it.putExtra(Constants.KEY_RECEIVER_ID, receiverId);
@@ -208,7 +207,10 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
 
     @Override
     public void onGetMessagedError() {
-
+        binding.shimmerEffect.stopShimmerAnimation();
+        binding.shimmerEffect.setVisibility(View.GONE);
+        binding.textErrorMessage.setText("Bạn chưa có đoạn chat nào! Hãy tạo chat ngay nếu muốn nhé!!");
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
     }
 
     @Override

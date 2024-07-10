@@ -72,7 +72,7 @@ public class GroupUserAdapter extends RecyclerView.Adapter<GroupUserAdapter.List
         }
 
         void setData(User userModel, int pos) {
-            if (Objects.equals(userModel.getOnline(), "1")){
+            if (userModel.getOnline()){
                 binding.imageStatus.setColorFilter(Color.rgb(0,255,0));
             }else {
                 binding.imageStatus.setColorFilter(Color.rgb(255,165,0));

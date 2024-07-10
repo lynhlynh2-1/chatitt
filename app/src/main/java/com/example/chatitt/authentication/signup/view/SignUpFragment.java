@@ -42,6 +42,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SignUpFragment extends Fragment implements SignUpContract.ViewInterface {
@@ -226,6 +227,10 @@ public class SignUpFragment extends Fragment implements SignUpContract.ViewInter
                         if(signedUser != null){
                             user.put("id", signedUser.getUid());
                         }
+                        user.put(Constants.KEY_ONLINE, true);
+                        user.put(Constants.FRIEND_LIST, new ArrayList<String>());
+                        user.put(Constants.MY_REQ_FRIEND_LIST, new ArrayList<String>());
+                        user.put(Constants.OTHER_REQ_FRIEND_LIST, new ArrayList<String>());
                         DocumentReference userInfor = db.collection(Constants.KEY_COLLECTION_USERS).document(firebaseAuth.getCurrentUser().getUid());
                         userInfor.set(user).addOnSuccessListener(documentReference -> {
                                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);

@@ -73,7 +73,8 @@ public class SendReqFragment extends Fragment implements SendReqContract.ViewInt
         binding.progressBar.setVisibility(View.GONE);
         userModelList.clear();
         adapter.notifyDataSetChanged();
-        Toast.makeText(requireContext(), "Danh sách trống", Toast.LENGTH_SHORT).show();
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setText("Danh sách trống");
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.contacts.manage_request_friend.presenter.ReceiveReqContract;
 import com.example.chatitt.contacts.manage_request_friend.presenter.ReceiveReqPresenter;
 import com.example.chatitt.databinding.FragmentReceiveReqBinding;
+import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
 
 import java.util.ArrayList;
@@ -75,7 +76,8 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
         binding.progressBar.setVisibility(View.GONE);
         userModelList.clear();
         adapter.notifyDataSetChanged();
-        Toast.makeText(requireContext(), "Danh sách trống", Toast.LENGTH_SHORT).show();
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setText("Danh sách trống");
     }
 
     @Override
@@ -100,16 +102,13 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
 
     @Override
     public void setAcceptFail() {
-        Activity activity =getActivity();
-        if (activity != null){
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(activity, "Thao tác thất bại!", Toast.LENGTH_SHORT).show();
+        Helpers.showToast(requireContext(), "Thao tác thất bại!");
 
-                }
-            });
-        }
+    }
+
+    @Override
+    public void onDelReqFailure() {
+        Helpers.showToast(requireContext(), "Thao tác thất bại!");
     }
 
     @Override

@@ -96,7 +96,7 @@ public class RecentUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         void setData(User userModel){
             binding.imageProfile.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
-            binding.imageStatus.setImageResource(Objects.equals(userModel.getOnline(), "1") ?  R.drawable.background_online : R.drawable.background_offline);
+            binding.imageStatus.setImageResource(userModel.getOnline() ?  R.drawable.background_online : R.drawable.background_offline);
             binding.getRoot().setOnClickListener(v->{
                 viewInterface.onRecentUserChatClick(userModel);
             });

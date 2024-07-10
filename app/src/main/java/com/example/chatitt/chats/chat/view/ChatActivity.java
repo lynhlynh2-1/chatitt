@@ -106,7 +106,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         super.onCreate(savedInstanceState);
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        Helpers.setupUI(binding.getRoot(),this);
+        Helpers.setupUI(binding.getRoot(),this);
 
         binding.recordButton.setRecordView(binding.recordView);
         binding.recordButton.setListenForRecord(false);
@@ -140,6 +140,9 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         if (chat != null){
             String receivedId = (String) getIntent().getSerializableExtra(Constants.KEY_RECEIVER_ID);
 //            chatPresenter.joinChat(preferenceManager.getString(Constants.KEY_USED_ID),preferenceManager.getString(Constants.KEY_NAME),preferenceManager.getString(Constants.KEY_AVATAR), chat.getId(), chat.getType(), preferenceManager.getString(Constants.KEY_PUBLIC_KEY));
+            if (chat.getName().equals("Han")){
+                Log.d(TAG, "init(): " + chat.getName());
+            }
             binding.textName.setText(chat.getName());
             if (chat.getAvatar() != null && !chat.getAvatar().isEmpty()){
                 binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat.getAvatar()));
@@ -153,8 +156,8 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         }else if (userModel != null){
             binding.textName.setText(userModel.getName());
             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
-            binding.textOnline.setText(Objects.equals(userModel.getOnline(), "1") ? "Đang hoạt động": "Ngoại tuyến");
-            binding.textOnline.setTextColor(Objects.equals(userModel.getOnline(), "1") ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
+            binding.textOnline.setText(userModel.getOnline() ? "Đang hoạt động": "Ngoại tuyến");
+            binding.textOnline.setTextColor(userModel.getOnline() ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
 //            chatPresenter.findChat(userModel.getId());
             binding.shimmerEffect.stopShimmerAnimation();
             binding.shimmerEffect.setVisibility(View.GONE);
@@ -559,7 +562,9 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 //        chatPresenter.joinChat(preferenceManager.getString(Constants.KEY_USED_ID),preferenceManager.getString(Constants.KEY_NAME),preferenceManager.getString(Constants.KEY_AVATAR), chatNoLastMessObj.getId(), chatNoLastMessObj.getType(), preferenceManager.getString(Constants.KEY_PUBLIC_KEY));
 //        chatPresenter.getMessages(chatNoLastMessObj.getId());
 //        chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chatNoLastMessObj.getType(), secretKey, this)
-
+        if (name.equals("Han")){
+            Log.d(TAG, "onUpdateInforSuccess: " + name);
+        }
         binding.textName.setText(name);
         if (chat.getAvatar() != null && !chat.getAvatar().isEmpty())
             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(avatar));
@@ -629,6 +634,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     public void onCreateAndSendSuccess(String content, String typeMess, int pos) {
 
         chat = chatPresenter.getChat();
+        chatPresenter.getMessages(chat.getId());
 //        messageList.get(pos).setIsSending("2");
         chatAdapter.notifyItemChanged(pos);
 
@@ -640,6 +646,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 //        }
 //        userIdList.add(preferenceManager.getString(Constants.KEY_USED_ID));
 
+//        if (userModel != mo)
         sendNoti(content,typeMess,chat.getName(),chat.getType_msg());
     }
 
@@ -773,6 +780,9 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
                         if (chat!= null){
                             if (newName != null) chat.setName(newName);
                             if (newAvatar != null) chat.setAvatar(newAvatar);
+                            if (chat.getName().equals("Han")){
+                                Log.d(TAG, "mStartForResult: " + chat.getName());
+                            }
                             binding.textName.setText(chat.getName());
                             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat.getAvatar()));
                         }
@@ -782,8 +792,12 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     @Override
     protected void onResume() {
         super.onResume();
+        chatPresenter.updateOnlineStatus(chat.getId(),true);
         Chat chat1 = chatPresenter.getChat();
-        if (chat1.getName() != null ){
+        if (chat1.getName() != null && !chat1.getName().isEmpty() ){
+            if (chat1.getName().equals("Han")){
+                Log.d(TAG, "onResume(): " + chat1.getName());
+            }
             binding.textName.setText(chat1.getName());
         }
         if (chat1.getAvatar()!= null && !chat1.getAvatar().isEmpty()){
@@ -798,6 +812,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        chatPresenter.updateOnlineStatus(chat.getId(), false);
 //        if(chat!= null){
 //            chatPresenter.leaveChat(preferenceManager.getString(Constants.KEY_NAME),chat.getId());
 //        }else if ( chatNoLastMessObj != null)

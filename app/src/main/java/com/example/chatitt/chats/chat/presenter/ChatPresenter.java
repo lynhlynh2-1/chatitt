@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 
 import com.example.chatitt.chats.chat_list.model.Chat;
 import com.example.chatitt.chats.chat_list.model.Message;
+import com.example.chatitt.networking.APIServices;
+import com.example.chatitt.networking.ApiClientFirebase;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
@@ -25,12 +27,20 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChatPresenter {
     private ChatContract.ViewInterface viewInterface ;
@@ -280,40 +290,39 @@ public class ChatPresenter {
 
 
     public void sendNotification(String messageBody){
-//        ApiClientFirebase.getClient().create(APIServices.class).sendMessage(
-//                Constants.getRemoteMsgHeaders(),
-//                messageBody
-//        ).enqueue(new Callback<String>() {
-//            @Override
-//            public void onResponse(@androidx.annotation.NonNull Call<String> call, @androidx.annotation.NonNull Response<String> response) {
-//                if(response.isSuccessful()){
-//                    try{
-//                        if(response.body() != null){
-//                            JSONObject responseJson = new JSONObject(response.body());
-//                            JSONArray results = responseJson.getJSONArray("results");
-//                            if(responseJson.getInt("failure") == 1){
-//                                JSONObject error = (JSONObject) results.get(0);
+        ApiClientFirebase.getClient().create(APIServices.class).sendMessage(
+                Constants.getRemoteMsgHeaders(),
+                messageBody
+        ).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(@androidx.annotation.NonNull Call<String> call, @androidx.annotation.NonNull Response<String> response) {
+                if(response.isSuccessful()){
+                    try{
+                        if(response.body() != null){
+                            JSONObject responseJson = new JSONObject(response.body());
+                            JSONArray results = responseJson.getJSONArray("results");
+                            if(responseJson.getInt("failure") == 1){
+                                JSONObject error = (JSONObject) results.get(0);
 //                                viewInterface.showToast(error.getString("error"));
-//                                return;
-//                            }
-//                        }
-//                    }catch (JSONException e){
-//                        e.printStackTrace();
-//                    }
+                                return;
+                            }
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
 //                    viewInterface.showToast("Gửi thông báo thành công");
-//                }else {
+                }else {
 //                    viewInterface.showToast("Thất bại: Code" + response.code());
-//                    Log.d("demo", ""+ response.code());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@androidx.annotation.NonNull Call<String> call, @androidx.annotation.NonNull Throwable t) {
-//
+                    Log.d("demo", ""+ response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@androidx.annotation.NonNull Call<String> call, @androidx.annotation.NonNull Throwable t) {
 //                viewInterface.showToast(t.getMessage());
-//            }
-//        });
-//
+            }
+        });
+
     }
 
     public void listenChatInfo(String chatId, String type_chat, String receiverId) {
@@ -334,7 +343,7 @@ public class ChatPresenter {
                         db.collection(Constants.KEY_COLLECTION_USERS)
                                 .document(receiverId)
                                 .addSnapshotListener((v,err)->{
-                                    if (!value.exists()){
+                                    if (v == null || !v.exists()){
                                         return;
                                     }
                                     chat.setAvatar(v.getString(Constants.KEY_AVATAR));
@@ -363,5 +372,11 @@ public class ChatPresenter {
                     viewInterface.onUpdateInforSuccess(value.getString(Constants.KEY_NAME), value.getString(Constants.KEY_AVATAR), value.getBoolean(Constants.KEY_ONLINE));
 
                 });
+    }
+
+    public void updateOnlineStatus(String chatId, boolean b) {
+//        db.collection(Constants.KEY_COLLECTION_CHAT)
+//                .document(chatId)
+//                .update(Constants.KEY_ONLINE,)
     }
 }

@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class User implements Serializable {
-    private String email, phonenumber,  password, re_password, avatar, name, id, coverImage, online, address, country, city, gender, birthday;
+    private String email, phonenumber,  password, re_password, avatar, name, id, coverImage, address, country, city, gender, birthday;
     private Boolean checked = false;
+    private Boolean online = false;
     private List<String> friend_list, my_friend_request, other_request_friend;
     public User(String email, String password, String re_password, String avatar, String name) {
         this.email = email;
@@ -69,10 +70,10 @@ public class User implements Serializable {
         this.phonenumber = phonenumber;
     }
 
-    public String getOnline() {
+    public Boolean getOnline() {
         return online;
     }
-    public void setOnline(String online) {
+    public void Boolean(Boolean online) {
         this.online = online;
     }
 

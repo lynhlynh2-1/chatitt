@@ -49,6 +49,7 @@ public class SendReqPresenter {
                         User tempUser = v.toObject(User.class);
                         if (tempUser.getMy_friend_request() == null || tempUser.getMy_friend_request().size() == 0){
                             viewInterface.getSendReqEmpty();
+                            return;
                         }
 
                         if (tempUser.getMy_friend_request().size() > userModelList.size()){

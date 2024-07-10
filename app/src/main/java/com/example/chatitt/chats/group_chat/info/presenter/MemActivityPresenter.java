@@ -156,7 +156,7 @@ public class MemActivityPresenter {
     public void getMember(Chat chat){
         userModelList.clear();
         viewInterface.resetAdapter();
-        List<String> userIDList = new ArrayList<>();
+        List<String> userIDList = new ArrayList<>(chat.getMembers());
         userIDList.add(0, chat.getLeader());
         getUserInforAndListener(userIDList);
     }

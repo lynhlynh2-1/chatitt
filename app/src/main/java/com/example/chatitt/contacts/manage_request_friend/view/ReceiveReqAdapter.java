@@ -64,7 +64,7 @@ public class ReceiveReqAdapter extends RecyclerView.Adapter<ReceiveReqAdapter.Vi
             binding.textName.setText(userModel.getName());
 
             binding.remove.setOnClickListener(view -> {
-                presenter.setAcceptFriend(userModel.getId(),"2", pos);
+                presenter.setDeclineFriend(userModel.getId(),"2", pos);
 
             });
             binding.accept.setOnClickListener(view -> {

@@ -67,7 +67,7 @@ public class PrivateUserAdapter extends RecyclerView.Adapter<PrivateUserAdapter.
         }
 
         void setData(User userModel) {
-            if (Objects.equals(userModel.getOnline(), "1")){
+            if (userModel.getOnline()){
                 binding.imageStatus.setColorFilter(Color.rgb(0,255,0));
             }else {
                 binding.imageStatus.setColorFilter(Color.rgb(255,165,0));

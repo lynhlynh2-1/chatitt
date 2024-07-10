@@ -69,6 +69,7 @@ public class ChatListPresenter {
                             return;
                         }
                         if (value == null || value.isEmpty()){
+                            viewInterface.onGetMessagedError();
                             Log.w(TAG, "Listen empty.", e);
                             return;
                         }
@@ -101,6 +102,7 @@ public class ChatListPresenter {
                                                 int chatIndex = chatList.indexOf(chat);
                                                 chat.setName(v.getString(Constants.KEY_NAME));
                                                 chat.setAvatar(v.getString(Constants.KEY_AVATAR));
+                                                chat.setOnline(Boolean.TRUE.equals(v.getBoolean(Constants.KEY_ONLINE)));
                                                 viewInterface.updateChat(chatIndex);
                                             });
                                 }
@@ -115,7 +117,7 @@ public class ChatListPresenter {
                                         .collect(Collectors.toList())
                                         .indexOf(chatId);
                                 Chat modifiedChat = chatList.get(chatIndex);
-                                if (!Objects.equals(chat.getType_chat(), Constants.KEY_PRIVATE_CHAT) && !chat.getName().equals(modifiedChat.getName())){
+                                if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT) && !chat.getName().equals(modifiedChat.getName())){
                                     modifiedChat.setName(chat.getName());
                                     modifiedChat.setAvatar(chat.getAvatar());
                                     viewInterface.updateChat(chatIndex);

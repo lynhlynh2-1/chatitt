@@ -10,6 +10,8 @@ import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -49,6 +51,7 @@ public class ReceiveReqPresenter {
                         User tempUser = v.toObject(User.class);
                         if (tempUser.getOther_request_friend() == null || tempUser.getOther_request_friend().size() == 0){
                             viewInterface.getReceiveReqEmpty();
+                            return;
                         }
                         if (tempUser.getOther_request_friend().size() > userModelList.size()){
                             //Add My Req
@@ -167,43 +170,58 @@ public class ReceiveReqPresenter {
     public void setAcceptFriend(String userId, String status, int pos){
         db.collection(Constants.KEY_COLLECTION_USERS)
                 .document(preferenceManager.getString(Constants.KEY_USED_ID))
-                .update(Constants.FRIEND_LIST, FieldValue.arrayUnion(userId));
-        db.collection(Constants.KEY_COLLECTION_USERS)
-                .document(userId)
-                .update(Constants.FRIEND_LIST, FieldValue.arrayUnion(preferenceManager.getString(Constants.KEY_USED_ID)));
-
-        //
-        db.collection(Constants.KEY_COLLECTION_USERS)
-                .document(preferenceManager.getString(Constants.KEY_USED_ID))
-                .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayRemove(userId));
-        db.collection(Constants.KEY_COLLECTION_USERS)
-                .document(userId)
-                .update(Constants.MY_REQ_FRIEND_LIST, FieldValue.arrayRemove(preferenceManager.getString(Constants.KEY_USED_ID)));
-//        APIServices.apiServices.setAccept(token, userId,status)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Observer<SetReqFriendRes>() {
-//                    @Override
-//                    public void onSubscribe(@NonNull Disposable d) {
-//                        disposable = d;
-//                    }
-//
-//                    @Override
-//                    public void onNext(@NonNull SetReqFriendRes setReqFriendRes) {
-//                        friend = setReqFriendRes.getData();
-//                    }
-//
-//                    @Override
-//                    public void onError(@NonNull Throwable e) {
-//                        viewInterface.setAcceptFail();
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        viewInterface.setAcceptSuccess(status, pos);
-//                    }
-//                });
+                .update(Constants.FRIEND_LIST, FieldValue.arrayUnion(userId))
+                .addOnSuccessListener(unused -> db.collection(Constants.KEY_COLLECTION_USERS)
+                        .document(userId)
+                        .update(Constants.FRIEND_LIST, FieldValue.arrayUnion(preferenceManager.getString(Constants.KEY_USED_ID)))
+                        .addOnSuccessListener(unused1 -> db.collection(Constants.KEY_COLLECTION_USERS)
+                                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                                .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayRemove(userId))
+                                .addOnSuccessListener(unused11 -> db.collection(Constants.KEY_COLLECTION_USERS)
+                                        .document(userId)
+                                        .update(Constants.MY_REQ_FRIEND_LIST, FieldValue.arrayRemove(preferenceManager.getString(Constants.KEY_USED_ID)))
+                                        .addOnFailureListener(e -> {
+                                            db.collection(Constants.KEY_COLLECTION_USERS)
+                                                    .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                                                    .update(Constants.FRIEND_LIST, FieldValue.arrayRemove(userId));
+                                            db.collection(Constants.KEY_COLLECTION_USERS)
+                                                    .document(userId)
+                                                    .update(Constants.FRIEND_LIST, FieldValue.arrayRemove(preferenceManager.getString(Constants.KEY_USED_ID)));
+                                            db.collection(Constants.KEY_COLLECTION_USERS)
+                                                    .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                                                    .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayUnion(userId));
+                                            viewInterface.setAcceptFail();
+                                        }))
+                                .addOnFailureListener(e -> {
+                                    viewInterface.setAcceptFail();
+                                    db.collection(Constants.KEY_COLLECTION_USERS)
+                                            .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                                            .update(Constants.FRIEND_LIST, FieldValue.arrayRemove(userId));
+                                    db.collection(Constants.KEY_COLLECTION_USERS)
+                                            .document(userId)
+                                            .update(Constants.FRIEND_LIST, FieldValue.arrayRemove(preferenceManager.getString(Constants.KEY_USED_ID)));
+                                }))
+                        .addOnFailureListener(e -> db.collection(Constants.KEY_COLLECTION_USERS)
+                                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                                .update(Constants.FRIEND_LIST, FieldValue.arrayRemove(userId))))
+                .addOnFailureListener(e -> viewInterface.setAcceptFail());
     }
 
 
+    public void setDeclineFriend(String userId, String s, int pos) {
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayRemove(userId))
+                .addOnSuccessListener(unused -> db.collection(Constants.KEY_COLLECTION_USERS)
+                        .document(userId)
+                        .update(Constants.MY_REQ_FRIEND_LIST, FieldValue.arrayRemove(preferenceManager.getString(Constants.KEY_USED_ID)))
+                        .addOnFailureListener(e -> {
+                            viewInterface.onDelReqFailure();
+                            db.collection(Constants.KEY_COLLECTION_USERS)
+                                    .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                                    .update(Constants.OTHER_REQ_FRIEND_LIST, FieldValue.arrayUnion(userId));
+                        }))
+                .addOnFailureListener(e -> viewInterface.onDelReqFailure());
+
+    }
 }

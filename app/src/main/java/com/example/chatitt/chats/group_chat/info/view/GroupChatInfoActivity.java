@@ -75,6 +75,7 @@ public class GroupChatInfoActivity extends AppCompatActivity implements Contract
             presenter.getInfoRealtime(chatId);
         }
         if (isAdmin) binding.btnLeaveRoom.setVisibility(View.GONE);
+        else binding.btnDeleteGroup.setVisibility(View.GONE);
     }
 
     private void setListener(){
@@ -102,6 +103,10 @@ public class GroupChatInfoActivity extends AppCompatActivity implements Contract
         });
         binding.btnLeaveRoom.setOnClickListener(v->{
             presenter.deleteMember(chatId,preferenceManager.getString(Constants.KEY_USED_ID));
+
+        });
+        binding.btnDeleteGroup.setOnClickListener(v->{
+            presenter.deleteGroup(chatId);
         });
     }
 
@@ -129,7 +134,6 @@ public class GroupChatInfoActivity extends AppCompatActivity implements Contract
         binding.progressBar.setVisibility(View.GONE);
         Toast.makeText(this, "Thay đổi thông tin thất bại!", Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void updateChatRealtime(String chatId, String newName, String newAvatar) {
         runOnUiThread(new Runnable() {
@@ -169,5 +173,12 @@ public class GroupChatInfoActivity extends AppCompatActivity implements Contract
         GroupChatInfoActivity.this.finish();
     }
 
-
+    @Override
+    public void onDelGroupSuccess() {
+        Toast.makeText(this, "Nhóm đã bị xóa", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        GroupChatInfoActivity.this.finish();
+    }
 }

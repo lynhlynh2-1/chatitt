@@ -6,10 +6,19 @@ public class Contract {
         void getStatusFriendSuccess();
 
         void getStatusFriendFail();
+
+        void onActionFail();
     }
     public interface ProfileDetailInterface{
         void getInfoDetailSuccess();
 
         void getInfoDetailFail();
+    }
+
+    public interface ChatInfoInterface{
+
+        void onDelMemEror();
+
+        void onDelGroupSuccess();
     }
 }

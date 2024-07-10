@@ -44,6 +44,9 @@ public class LogInPresenter {
                                     .addOnCompleteListener(task -> {
                                         if(task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0 ){
                                             DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
+                                            FirebaseFirestore.getInstance().collection(Constants.KEY_COLLECTION_USERS)
+                                                    .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                                                    .update(Constants.KEY_ONLINE,true);
                                             preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                                             preferenceManager.putString(Constants.KEY_USED_ID, documentSnapshot.getId());
                                             preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));

@@ -91,9 +91,26 @@ public class ChangeGroupInfoPresenter {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        viewInterface.onUpdateEror();
+                        viewInterface.onDelMemEror();
                     }
                 });
     }
 
+    public void deleteGroup(String chatId) {
+        db.collection(Constants.KEY_COLLECTION_CHAT)
+                .document(chatId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        viewInterface.onDelGroupSuccess();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        viewInterface.onDelMemEror();
+                    }
+                });
+    }
 }

@@ -31,6 +31,8 @@ public class Contract {
         void onDelMemSuccess();
 
         void onChatInfoChanged(String name, String avatar);
+
+        void onDelGroupSuccess();
     }
 
     public interface MemListViewInterface{

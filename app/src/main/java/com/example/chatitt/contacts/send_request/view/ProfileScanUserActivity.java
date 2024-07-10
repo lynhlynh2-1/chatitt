@@ -108,6 +108,11 @@ public class ProfileScanUserActivity extends AppCompatActivity implements Profil
         binding.imageProfile.setVisibility(View.VISIBLE);
         binding.cardView2.setVisibility(View.VISIBLE);
 
+        binding.before.setVisibility(View.GONE);
+        binding.afterSend.setVisibility(View.GONE);
+        binding.afterReceive.setVisibility(View.GONE);
+        binding.textMessage.setVisibility(View.GONE);
+
         you = presenter.getYou();
         if (you.getCoverImage() == null) {
             binding.coverImg.setImageResource(R.drawable.cover_img_placeholder);
