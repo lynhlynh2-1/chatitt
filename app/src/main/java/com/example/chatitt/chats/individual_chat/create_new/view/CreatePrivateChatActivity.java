@@ -70,11 +70,8 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(!TextUtils.isEmpty(query.trim())){
-                    createChatPrivatePresenter.searchUser(binding.searchView.getQuery().toString());
-                    binding.shimmerEffect.startShimmerAnimation();
-                    binding.shimmerEffect.setVisibility(View.VISIBLE);
-                    binding.usersRecyclerView.setVisibility(View.GONE);
-                    binding.textErrorMessage.setVisibility(View.GONE);
+                    List<User> userModels = Helpers.checkStringContain(query, userModelList);
+                    adapter.reset(userModels);
                 }else{
                     adapter.reset(userModelList);
                 }

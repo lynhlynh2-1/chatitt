@@ -82,31 +82,35 @@ public class ChatListPresenter {
                                 QueryDocumentSnapshot docRef = documentChange.getDocument();
                                 Chat chat = docRef.toObject(Chat.class);
                                 k = k + 1;
-                                chatList.add(chat);
-                                if (chat.getType_chat().equals(Constants.KEY_PRIVATE_CHAT)){
-                                    String receiverId = chat.getLeader();
-                                    if (Objects.equals(receiverId, preferenceManager.getString(Constants.KEY_USED_ID))){
-                                        receiverId = chat.getMembers().get(0);
-                                    }
-                                    db.collection(Constants.KEY_COLLECTION_USERS)
-                                            .document(receiverId)
-                                            .addSnapshotListener((v,err)->{
-                                                if (err != null) {
-                                                    Log.w(TAG, "Listen user in getChat List failed.", e);
-                                                    return;
-                                                }
-                                                if (v == null || !v.exists()){
-                                                    Log.w(TAG, "Listen user in getChat List empty.", e);
-                                                    return;
-                                                }
-                                                int chatIndex = chatList.indexOf(chat);
-                                                chat.setName(v.getString(Constants.KEY_NAME));
-                                                chat.setAvatar(v.getString(Constants.KEY_AVATAR));
-//                                                chat.setOnline(Boolean.TRUE.equals(v.getBoolean(Constants.KEY_ONLINE)));
-                                                viewInterface.updateChat(chatIndex);
-                                            });
-                                }
+                                if(!chatList.stream()
+                                        .map(Chat::getId)
+                                        .collect(Collectors.toList()).contains(chat.getId())){
 
+                                    chatList.add(chat);
+                                    if (chat.getType_chat().equals(Constants.KEY_PRIVATE_CHAT)){
+                                        String receiverId = chat.getLeader();
+                                        if (Objects.equals(receiverId, preferenceManager.getString(Constants.KEY_USED_ID))){
+                                            receiverId = chat.getMembers().get(0);
+                                        }
+                                        db.collection(Constants.KEY_COLLECTION_USERS)
+                                                .document(receiverId)
+                                                .addSnapshotListener((v,err)->{
+                                                    if (err != null) {
+                                                        Log.w(TAG, "Listen user in getChat List failed.", e);
+                                                        return;
+                                                    }
+                                                    if (v == null || !v.exists()){
+                                                        Log.w(TAG, "Listen user in getChat List empty.", e);
+                                                        return;
+                                                    }
+                                                    int chatIndex = chatList.indexOf(chat);
+                                                    chat.setName(v.getString(Constants.KEY_NAME));
+                                                    chat.setAvatar(v.getString(Constants.KEY_AVATAR));
+//                                                chat.setOnline(Boolean.TRUE.equals(v.getBoolean(Constants.KEY_ONLINE)));
+                                                    viewInterface.updateChat(chatIndex);
+                                                });
+                                    }
+                                }
                             }
                             if (documentChange.getType() == DocumentChange.Type.MODIFIED){
                                 QueryDocumentSnapshot docRef = documentChange.getDocument();

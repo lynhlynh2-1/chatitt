@@ -236,6 +236,7 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
     @Override
     public void updateChatRealtime(int count) {
         binding.swipeLayout.setRefreshing(false);
+        binding.textErrorMessage.setVisibility(View.GONE);
         binding.shimmerEffect.stopShimmerAnimation();
         binding.shimmerEffect.setVisibility(View.GONE);
         binding.conversationRecycleView.setVisibility(View.VISIBLE);

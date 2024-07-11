@@ -65,7 +65,8 @@ public class CreateChatPrivatePresenter {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 User user = document.toObject(User.class);
-                                usersFind.add(user);
+                                if (!user.getId().equals(preferenceManager.getString(Constants.KEY_USED_ID)))
+                                    usersFind.add(user);
                             }
                             viewInterface.onSearchUserSuccess(usersFind);
                         } else {
