@@ -89,7 +89,7 @@ public class ShowImageActivity extends AppCompatActivity {
         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         if(downloadManager != null){
             downloadManager.enqueue(request);
-            Helpers.showToast(getApplicationContext(),"Đang tải ảnh...");
+            Helpers.showToast(getApplicationContext(),"Đã tải ảnh");
         }
 //        String root = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/Download/";
 //        File myDir = new File(root);

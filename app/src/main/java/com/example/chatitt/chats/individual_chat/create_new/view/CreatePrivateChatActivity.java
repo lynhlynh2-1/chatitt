@@ -111,12 +111,13 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
 
     @Override
     public void onFindChatSucces(String id) {
-        binding.loading.setVisibility(View.VISIBLE);
+        binding.loading.setVisibility(View.GONE);
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra(Constants.KEY_COLLECTION_CHAT, createChatPrivatePresenter.getChat());
         intent.putExtra(Constants.KEY_RECEIVER_ID, id);
         startActivity(intent);
-        finish();
+        if (!isFriendTab)
+            finish();
     }
 
     @Override
@@ -136,7 +137,7 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
 
     @Override
     public void onActionFail() {
-
+        Helpers.showToast(getApplicationContext(), "Thao tác lỗi, vui lòng thử lại!!");
     }
 
     @Override
@@ -149,6 +150,10 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
         binding.textErrorMessage.setText("Danh sách trống");
     }
 
+    @Override
+    public void onNoChange() {
+        binding.swipeLayout.setRefreshing(false);
+    }
 
     @Override
     public void onGetFriendSuccess(User user) {
@@ -236,7 +241,6 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
     @Override
     public void onDelFriendError() {
         Helpers.showToast(getApplicationContext(), "Thao tác thất bại!");
-
     }
 
     @Override

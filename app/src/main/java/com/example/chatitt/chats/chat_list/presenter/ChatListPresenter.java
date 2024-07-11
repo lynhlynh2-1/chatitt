@@ -102,7 +102,7 @@ public class ChatListPresenter {
                                                 int chatIndex = chatList.indexOf(chat);
                                                 chat.setName(v.getString(Constants.KEY_NAME));
                                                 chat.setAvatar(v.getString(Constants.KEY_AVATAR));
-                                                chat.setOnline(Boolean.TRUE.equals(v.getBoolean(Constants.KEY_ONLINE)));
+//                                                chat.setOnline(Boolean.TRUE.equals(v.getBoolean(Constants.KEY_ONLINE)));
                                                 viewInterface.updateChat(chatIndex);
                                             });
                                 }

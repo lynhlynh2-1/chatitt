@@ -53,7 +53,10 @@ public class ReceiveReqPresenter {
                             viewInterface.getReceiveReqEmpty();
                             return;
                         }
-                        if (tempUser.getOther_request_friend().size() > userModelList.size()){
+                        if (tempUser.getOther_request_friend().size() == userModelList.size()){
+                            viewInterface.onNoChange();
+                        }
+                        else if (tempUser.getOther_request_friend().size() > userModelList.size()){
                             //Add My Req
                             int oldSize = userModelList.size();
                             int newSize = tempUser.getOther_request_friend().size();
@@ -63,17 +66,11 @@ public class ReceiveReqPresenter {
                                 userIDList.add(userId);
                             }
                             getUserInforAndListener(userIDList);
-                        }else if (tempUser.getOther_request_friend().size() + 1 < userModelList.size()){
+                        }else if (tempUser.getOther_request_friend().size() < userModelList.size()){
                             //Del My Req
                             int i = 0;
-                            int j = 0;
                             for (User user : userModelList){
-                                if (j == 0) {
-                                    j++;
-                                    continue;
-                                }
                                 if (i == tempUser.getOther_request_friend().size()){
-                                    i ++;
                                     break;
                                 }
                                 if (user.getId().equals(tempUser.getOther_request_friend().get(i))){

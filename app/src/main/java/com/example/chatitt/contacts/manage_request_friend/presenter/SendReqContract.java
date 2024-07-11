@@ -20,5 +20,7 @@ public class SendReqContract {
 
 
         void onGetSendReqError();
+
+        void onNoChange();
     }
 }

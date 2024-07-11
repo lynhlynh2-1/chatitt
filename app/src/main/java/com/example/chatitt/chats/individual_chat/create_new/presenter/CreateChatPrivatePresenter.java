@@ -87,34 +87,30 @@ public class CreateChatPrivatePresenter {
                     }
                     if (v != null && v.exists()){
                         User tempUser = v.toObject(User.class);
-                        if (tempUser.getOther_request_friend() == null || tempUser.getOther_request_friend().size() == 0){
+                        if (tempUser.getFriend_list() == null || tempUser.getFriend_list().size() == 0){
                             viewInterface.getListFriendEmpty();
                             return;
                         }
-                        if (tempUser.getOther_request_friend().size() > userModelList.size()){
+                        if (tempUser.getFriend_list().size() == userModelList.size()){
+                            viewInterface.onNoChange();
+                        } else if (tempUser.getFriend_list().size() > userModelList.size()){
                             //Add My Req
                             int oldSize = userModelList.size();
-                            int newSize = tempUser.getOther_request_friend().size();
+                            int newSize = tempUser.getFriend_list().size();
                             List<String> userIDList = new ArrayList<>();
                             for (int i = oldSize; i < newSize; i++) {
-                                String userId = tempUser.getOther_request_friend().get(i);
+                                String userId = tempUser.getFriend_list().get(i);
                                 userIDList.add(userId);
                             }
                             getUserInforAndListener(userIDList);
-                        }else if (tempUser.getOther_request_friend().size() < userModelList.size()){
+                        }else if (tempUser.getFriend_list().size() < userModelList.size()){
                             //Del My Req
                             int i = 0;
-                            int j = 0;
                             for (User user : userModelList){
-                                if (j == 0) {
-                                    j++;
-                                    continue;
-                                }
-                                if (i == tempUser.getOther_request_friend().size()){
-                                    i ++;
+                                if (i == tempUser.getFriend_list().size()){
                                     break;
                                 }
-                                if (user.getId().equals(tempUser.getOther_request_friend().get(i))){
+                                if (user.getId().equals(tempUser.getFriend_list().get(i))){
                                     i++;
                                 }else {
                                     break;
@@ -125,25 +121,25 @@ public class CreateChatPrivatePresenter {
                         }
                     }
                 });
-        db.collection(Constants.KEY_COLLECTION_USERS).
-                whereArrayContains(Constants.FRIEND_LIST, preferenceManager.getString(Constants.KEY_USED_ID))
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            userModelList.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                User user = document.toObject(User.class);
-                                userModelList.add(user);
-                            }
-                            viewInterface.onGetListFriendSuccess();
-                        } else {
-                            Log.d(TAG, "Error getting ListFriend ", task.getException());
-                            viewInterface.onGetListFriendError();
-                        }
-                    }
-                });
+//        db.collection(Constants.KEY_COLLECTION_USERS).
+//                whereArrayContains(Constants.FRIEND_LIST, preferenceManager.getString(Constants.KEY_USED_ID))
+//                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            userModelList.clear();
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                Log.d(TAG, document.getId() + " => " + document.getData());
+//                                User user = document.toObject(User.class);
+//                                userModelList.add(user);
+//                            }
+//                            viewInterface.onGetListFriendSuccess();
+//                        } else {
+//                            Log.d(TAG, "Error getting ListFriend ", task.getException());
+//                            viewInterface.onGetListFriendError();
+//                        }
+//                    }
+//                });
     }
 
     private void getUserInforAndListener(List<String> userIDList) {

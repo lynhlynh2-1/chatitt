@@ -348,7 +348,7 @@ public class ChatPresenter {
                                     }
                                     chat.setAvatar(v.getString(Constants.KEY_AVATAR));
                                     chat.setName(v.getString(Constants.KEY_NAME));
-                                    chat.setOnline(Boolean.FALSE.equals(v.getBoolean(Constants.KEY_ONLINE)));
+//                                    chat.setOnline(Boolean.FALSE.equals(v.getBoolean(Constants.KEY_ONLINE)));
                                     viewInterface.onUpdateInforSuccess(v.getString(Constants.KEY_NAME), v.getString(Constants.KEY_AVATAR), v.getBoolean(Constants.KEY_ONLINE));
                                 });
                     }else

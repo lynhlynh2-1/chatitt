@@ -813,7 +813,8 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        chatPresenter.updateOnlineStatus(chat.getId(), false);
+        if (chat != null)
+            chatPresenter.updateOnlineStatus(chat.getId(), false);
 //        if(chat!= null){
 //            chatPresenter.leaveChat(preferenceManager.getString(Constants.KEY_NAME),chat.getId());
 //        }else if ( chatNoLastMessObj != null)

@@ -57,6 +57,14 @@ public class SendReqFragment extends Fragment implements SendReqContract.ViewInt
     }
 
     @Override
+    public void onNoChange() {
+        binding.swipeLayout.setRefreshing(false);
+        binding.progressBar.setVisibility(View.GONE);
+        binding.recyclerview.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setVisibility(View.GONE);
+    }
+
+    @Override
     public void getSendReqSuccess(User tempUser) {
         binding.recyclerview.setVisibility(View.VISIBLE);
         binding.progressBar.setVisibility(View.GONE);

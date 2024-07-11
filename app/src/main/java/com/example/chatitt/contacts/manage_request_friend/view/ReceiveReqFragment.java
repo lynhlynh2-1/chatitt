@@ -125,4 +125,11 @@ public class ReceiveReqFragment extends Fragment implements ReceiveReqContract.V
         adapter.notifyItemChanged(i);
     }
 
+    @Override
+    public void onNoChange() {
+        binding.swipeLayout.setRefreshing(false);
+        binding.progressBar.setVisibility(View.GONE);
+        binding.recyclerview.setVisibility(View.VISIBLE);
+        binding.textErrorMessage.setVisibility(View.GONE);
+    }
 }

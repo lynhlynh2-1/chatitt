@@ -11,6 +11,7 @@ import com.google.type.DateTime;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Chat implements Serializable {
     private String id;
@@ -22,13 +23,13 @@ public class Chat implements Serializable {
     private String timestamp;
     private String lastMessage;
     private String senderName;
-    private boolean online;
+    private Map<String, Object> online;
     private String avatar;
     private List<String> fcm;
 
     public Chat(){
     }
-    public Chat(String id, String name, String leader, List<String> members, String type_chat, String type_msg, String timestamp, String lastMessage, String senderName, boolean online, String avatar, List<String> fcm) {
+    public Chat(String id, String name, String leader, List<String> members, String type_chat, String type_msg, String timestamp, String lastMessage, String senderName, Map<String, Object> online, String avatar, List<String> fcm) {
         this.id = id;
         this.name = name;
         this.leader = leader;
@@ -100,11 +101,11 @@ public class Chat implements Serializable {
         this.avatar = avatar;
     }
 
-    public boolean getOnline() {
+    public Map<String, Object> getOnline() {
         return online;
     }
 
-    public void setOnline(boolean online) {
+    public void setOnline(Map<String, Object> online) {
         this.online = online;
     }
 

@@ -51,8 +51,9 @@ public class SendReqPresenter {
                             viewInterface.getSendReqEmpty();
                             return;
                         }
-
-                        if (tempUser.getMy_friend_request().size() > userModelList.size()){
+                        if (tempUser.getMy_friend_request().size() == userModelList.size()){
+                            viewInterface.onNoChange();
+                        }else if (tempUser.getMy_friend_request().size() > userModelList.size()){
                             //Add My Req
                             int oldSize = userModelList.size();
                             int newSize = tempUser.getMy_friend_request().size();
@@ -62,17 +63,11 @@ public class SendReqPresenter {
                                 userIDList.add(userId);
                             }
                             getUserInforAndListener(userIDList);
-                        }else if (tempUser.getMy_friend_request().size() + 1 < userModelList.size()){
+                        }else if (tempUser.getMy_friend_request().size() < userModelList.size()){
                             //Del My Req
                             int i = 0;
-                            int j = 0;
                             for (User user : userModelList){
-                                if (j == 0) {
-                                    j++;
-                                    continue;
-                                }
                                 if (i == tempUser.getMy_friend_request().size()){
-                                    i ++;
                                     break;
                                 }
                                 if (user.getId().equals(tempUser.getMy_friend_request().get(i))){

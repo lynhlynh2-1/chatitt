@@ -35,5 +35,7 @@ public class CreateChatPrivateContract {
         void onGetFriendSuccess(User user);
 
         void onFriendInfoChangeSuccess(int i);
+
+        void onNoChange();
     }
 }
