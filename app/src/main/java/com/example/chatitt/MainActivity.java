@@ -1,10 +1,15 @@
 package com.example.chatitt;
 
+import static com.example.chatitt.ultilities.Constants.TAG;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.chatitt.chats.chat_list.view.ChatListFragment;
@@ -14,6 +19,10 @@ import com.example.chatitt.profile.view.ProfileFragment;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
@@ -35,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         Helpers.setupUI(binding.getRoot(), this);
 
         preferenceManager = new PreferenceManager(getApplicationContext());
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view_tag, chatsFragment, "ChatsFragment").commit();
 //        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -78,24 +90,29 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
-
-        JSONObject data = new JSONObject();
-        try {
-            data.put("userId", preferenceManager.getString(Constants.KEY_USED_ID));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         getToken();
 
     }
     private void getToken(){
-        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(
+                this::updateToken
+        )
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "getToken()");
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private void updateToken(String token) {
-        if (preferenceManager.getString(Constants.KEY_FCM_TOKEN) != null && preferenceManager.getString(Constants.KEY_FCM_TOKEN).equals(token)) return;
+//        if (preferenceManager.getString(Constants.KEY_FCM_TOKEN) != null && preferenceManager.getString(Constants.KEY_FCM_TOKEN).equals(token)) return;
         preferenceManager.putString(Constants.KEY_FCM_TOKEN, token);
 
+        FirebaseFirestore.getInstance().collection(Constants.KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.KEY_USED_ID))
+                .update(Constants.KEY_FCM_TOKEN, token);
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -112,13 +129,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        JSONObject data = new JSONObject();
-        try {
-            data.put("userId", preferenceManager.getString(Constants.KEY_USED_ID));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
 }

@@ -87,6 +87,7 @@
         android:layout_marginEnd="@dimen/_5sdp"
         android:padding="@dimen/_4sdp"
         android:src="@drawable/ic_phone"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/container_name"
         app:layout_constraintEnd_toStartOf="@+id/imageInfo"
         app:layout_constraintTop_toTopOf="@+id/container_name"

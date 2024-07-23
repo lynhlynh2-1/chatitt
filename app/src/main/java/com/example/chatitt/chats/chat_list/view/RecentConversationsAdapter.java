@@ -1,30 +1,21 @@
 package com.example.chatitt.chats.chat_list.view;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
-import android.util.Base64;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatitt.chats.chat_list.model.Chat;
-import com.example.chatitt.chats.chat_list.model.Message;
 import com.example.chatitt.chats.chat_list.presenter.ChatListContract;
 import com.example.chatitt.databinding.ItemContainerRecentConversionBinding;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.PreferenceManager;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Objects;
-
-import javax.crypto.SecretKey;
 
 public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConversationsAdapter.ConversiongViewHolder>{
     private List<Chat> chatList;
@@ -73,7 +64,7 @@ public class RecentConversationsAdapter extends RecyclerView.Adapter<RecentConve
         }
 
         void setData(Chat chat) {
-            if (Objects.equals(chat.getOnline(), "1")){
+            if (chat.getOnline() != null && chat.getOnline().containsValue(true)){
                 binding.imageStatus.setColorFilter(Color.rgb(0,255,0));
             }else {
                 binding.imageStatus.setColorFilter(Color.rgb(255,165,0));

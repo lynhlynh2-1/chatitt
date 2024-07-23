@@ -55,6 +55,7 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
         Helpers.setupUI(rootView, requireActivity());
         init();
         chatsPresenter.getMessaged();
+//        chatsPresenter.listenOnlineStatus();
         setListener();
 
         return rootView;
@@ -268,5 +269,19 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
     @Override
     public void onNewMemberAdded() {
 
+    }
+
+    @Override
+    public void onUpdateOnlineStatus(User user) {
+        String userId = user.getId();
+        int pos = 0;
+        for (Chat chat : chatList){
+            if (chat.getLeader().contains(userId) || chat.getMembers().contains(userId)){
+                chat.updateFCMUser(userId, user.getFcmToken());
+                chat.updateOnline(userId, user.getOnline());
+                conversationsAdapter.notifyItemChanged(pos);
+            }
+            pos ++;
+        }
     }
 }

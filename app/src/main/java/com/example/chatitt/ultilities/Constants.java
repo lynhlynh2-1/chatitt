@@ -2,6 +2,7 @@ package com.example.chatitt.ultilities;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Constants {
 
@@ -73,6 +74,7 @@ public class Constants {
     public static final String KEY_ID = "id";
     public static final int RECORDING_REQUEST_CODE = 123;
     public static final int STORAGE_REQUEST_CODE = 456;
+    public static final String KEY_IN_CHAT = "inchat";
 
 
     public static HashMap<String, String> remotoMsgHeaders = null;
@@ -87,18 +89,18 @@ public class Constants {
 //    public static final String BASE_URL_SOCKET = "http://192.168.50.128:16000";
     public static final String BASE_URL_SOCKET = "http://10.0.2.2:16000";
 
-    public static HashMap<String, String> getRemoteMsgHeaders(){
-        if(remotoMsgHeaders == null){
-            remotoMsgHeaders = new HashMap<>();
-            remotoMsgHeaders.put(
-                    REMOTE_MSG_AUTHORIZATION,
-                    "key=AAAA8b1Nfcw:APA91bGpmhEG-f5QAEVArQGsXLRhTA-oPurgmE7mUFOj2nnlZDbY23SpKnQByqLRRUhGfCPT6qOv2JtbtVGbTom3eWmZ7jQDFfNdAfleQxB8Libb9O_dL1UXItm10gZomOo2EbbXH47x"
-            );
-            remotoMsgHeaders.put(
-                    REMOTE_MSG_CONTENT_TYPE,
-                    "application/json"
-            );
-        }
+    public static HashMap<String, String> getRemoteMsgHeaders(String token){
+
+        remotoMsgHeaders = new HashMap<>();
+        remotoMsgHeaders.put(
+                REMOTE_MSG_AUTHORIZATION,
+                "Bearer " + token
+        );
+        remotoMsgHeaders.put(
+                REMOTE_MSG_CONTENT_TYPE,
+                "application/json"
+        );
+
         return remotoMsgHeaders;
     }
 

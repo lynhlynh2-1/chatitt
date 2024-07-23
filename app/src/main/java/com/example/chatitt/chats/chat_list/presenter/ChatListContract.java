@@ -29,5 +29,6 @@ public class ChatListContract {
 
         void onNewMemberAdded();
 
+        void onUpdateOnlineStatus(User user);
     }
 }

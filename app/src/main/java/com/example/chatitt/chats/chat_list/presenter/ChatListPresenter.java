@@ -106,7 +106,7 @@ public class ChatListPresenter {
                                                     int chatIndex = chatList.indexOf(chat);
                                                     chat.setName(v.getString(Constants.KEY_NAME));
                                                     chat.setAvatar(v.getString(Constants.KEY_AVATAR));
-//                                                chat.setOnline(Boolean.TRUE.equals(v.getBoolean(Constants.KEY_ONLINE)));
+//                                                    chat.setOnline(v.getBoolean(Constants.KEY_ONLINE));
                                                     viewInterface.updateChat(chatIndex);
                                                 });
                                     }
@@ -145,4 +145,64 @@ public class ChatListPresenter {
                 });
     }
 
+    public void listenOnlineStatus() {
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .addSnapshotListener((value, e)->{
+                    if (e != null){
+                        return;
+                    }
+                    if (value == null || value.isEmpty()){
+                        return;
+                    }
+                    for (DocumentChange documentChange:
+                            value.getDocumentChanges()) {
+                        if (documentChange.getType() == DocumentChange.Type.MODIFIED){
+                            QueryDocumentSnapshot docRef = documentChange.getDocument();
+                            User tempUser = docRef.toObject(User.class);
+                            if (tempUser.getId().equals(preferenceManager.getString(Constants.KEY_USED_ID))) continue;
+                            viewInterface.onUpdateOnlineStatus(tempUser);
+                        }
+                    }
+                });
+//        List<String> memIds = new ArrayList<>(chat.getMembers());
+//        memIds.add(chat.getLeader());
+//        for (String memId : memIds){
+//            db.collection(Constants.KEY_COLLECTION_USERS)
+//                    .document(memId)
+//                    .addSnapshotListener((value, e)->{
+//                        if (e != null){
+//                            return;
+//                        }
+//                        if (value == null || !value.exists()){
+//                            return;
+//                        }
+//                        User tempUser = value.toObject(User.class);
+//                        if (tempUser != null){
+//                            chat.updateFCMUser(tempUser.getId(), tempUser.getFcmToken());
+//                            chat.updateOnline(tempUser.getId(), tempUser.getOnline());
+//                            viewInterface.onUpdateOnlineStatus(chat., pos);
+//                        }
+//                    });
+//        }
+
+
+//        db.collection(Constants.KEY_COLLECTION_CHAT)
+//                .document(chat.getId())
+//                .addSnapshotListener((value, e)-> {
+//                    if (e != null) {
+//                        return;
+//                    }
+//                    if (value == null || !value.exists()) {
+//                        return;
+//                    }
+//                    Chat tempChat = value.toObject(Chat.class);
+//                    tempChat.setFcm(chat.getFcm());
+//                    tempChat.getInchat().put(preferenceManager.getString(Constants.KEY_USED_ID), false);
+//                    chat = tempChat;
+//                    if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT)) {
+//                        viewInterface.onUpdateInforSuccess(value.getString(Constants.KEY_NAME), value.getString(Constants.KEY_AVATAR), chat.getOnline().containsValue(true));
+//                    }
+//                });
+
+    }
 }

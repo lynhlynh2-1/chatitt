@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.chats.chat_list.model.Chat;
 import com.example.chatitt.chats.chat_list.model.Message;
 import com.example.chatitt.networking.APIServices;
@@ -107,29 +108,6 @@ public class ChatPresenter {
                 });
     }
 
-
-    public void findChatById(String chatId) {
-        db.collection(Constants.KEY_COLLECTION_CHAT)
-                .document(chatId)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
-
-                        if (value != null && value.exists()) {
-                            Log.d(TAG, "Current data: " + value.getData());
-                            chat = value.toObject(Chat.class);
-                            viewInterface.onInfoChatChanged(chat);
-                        } else {
-                            Log.d(TAG, "Current data: null");
-                        }
-                    }
-                });
-    }
-
     public void createChatAndSend(ArrayList<String> receivers, String name, String typeChat, String typeMess, String content, int pos){
         // Add a new document with a generated id.
         DocumentReference chatRef = db.collection(Constants.KEY_COLLECTION_CHAT).document();
@@ -192,35 +170,6 @@ public class ChatPresenter {
                 });
     }
 
-    public void createAndSendPrivate(String receiveId, String content,String typeChat, String typeMess, int pos) {
-//        APIServices.apiServices.createPriAndsend(token,receiveId,content,typeChat,typeMess)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Observer<SendResponse>() {
-//                    @Override
-//                    public void onSubscribe(@NonNull Disposable d) {
-//                        disposables.add( d);
-//                    }
-//
-//                    @Override
-//                    public void onNext(@NonNull SendResponse sendResponse) {
-//                        chatNoLastMessObj = sendResponse.getData().getChat();
-//                    }
-//
-//                    @Override
-//                    public void onError(@NonNull Throwable e) {
-//                        e.printStackTrace();
-//
-//                        viewInterface.onSendError(pos);
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        viewInterface.onCreateAndSendSuccess(content, typeMess, pos);
-//                    }
-//                });
-    }
-
     public void send(String chatId, String content, String typeMess, int pos) {
         DocumentReference messRef = db.collection(Constants.KEY_COLLECTION_CHAT).document(chatId)
                 .collection(Constants.KEY_COLLECTION_MESSAGE).document();
@@ -258,44 +207,17 @@ public class ChatPresenter {
 
 
     }
-    public void createAndSendGroup(List<String> member, String name,String content, String typeChat, String typeMess, int pos) {
-//        APIServices.apiServices.createGroupAndsend(token,member,name,content,typeChat, typeMess)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Observer<SendResponse>() {
-//                    @Override
-//                    public void onSubscribe(@NonNull Disposable d) {
-//                        disposables.add(d);
-//                    }
-//
-//                    @Override
-//                    public void onNext(@NonNull SendResponse sendResponse) {
-//                        chatNoLastMessObj = sendResponse.getData().getChat();
-//                    }
-//
-//                    @Override
-//                    public void onError(@NonNull Throwable e) {
-//                        e.printStackTrace();
-//
-//                        viewInterface.onSendError(pos);
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        viewInterface.onCreateAndSendSuccess(content, typeMess, pos);
-//
-//                    }
-//                });
-    }
 
 
-    public void sendNotification(String messageBody){
+    public void sendNotification(String messageBody, String token){
         ApiClientFirebase.getClient().create(APIServices.class).sendMessage(
-                Constants.getRemoteMsgHeaders(),
+                Constants.getRemoteMsgHeaders(token),
                 messageBody
         ).enqueue(new Callback<String>() {
             @Override
             public void onResponse(@androidx.annotation.NonNull Call<String> call, @androidx.annotation.NonNull Response<String> response) {
+                Log.d(TAG,"onResponse");
+
                 if(response.isSuccessful()){
                     try{
                         if(response.body() != null){
@@ -303,56 +225,91 @@ public class ChatPresenter {
                             JSONArray results = responseJson.getJSONArray("results");
                             if(responseJson.getInt("failure") == 1){
                                 JSONObject error = (JSONObject) results.get(0);
+                                Log.e(TAG,"Failure NOTI " + error);
 //                                viewInterface.showToast(error.getString("error"));
                                 return;
                             }
+                            Log.e(TAG,"Success NOTI " + results );
+
+                        }else {
+                            Log.e(TAG,"Failure NOTI null ");
                         }
                     }catch (JSONException e){
-                        e.printStackTrace();
+                        Log.e(TAG,"Exception NOTI " + e.getMessage());
                     }
 //                    viewInterface.showToast("Gửi thông báo thành công");
                 }else {
 //                    viewInterface.showToast("Thất bại: Code" + response.code());
-                    Log.d("demo", ""+ response.code());
+                    Log.e(TAG,"ERROR NOTI " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@androidx.annotation.NonNull Call<String> call, @androidx.annotation.NonNull Throwable t) {
 //                viewInterface.showToast(t.getMessage());
+                Log.e(TAG,"onFailure NOTI " + t.getMessage());
+
             }
         });
 
     }
 
-    public void listenChatInfo(String chatId, String type_chat, String receiverId) {
-
+    public void listenChatInfo(String chatId, String type_chat, String receiverId, List<String> memIds) {
+        for (String memId : memIds){
+            db.collection(Constants.KEY_COLLECTION_USERS)
+                    .document(memId)
+                    .addSnapshotListener((value, e)->{
+                        if (e != null){
+                            return;
+                        }
+                        if (value == null || !value.exists()){
+                            return;
+                        }
+                        User tempUser = value.toObject(User.class);
+                        if (tempUser != null){
+                            chat.updateFCMUser(tempUser.getId(), tempUser.getFcmToken());
+                            chat.updateOnline(tempUser.getId(), tempUser.getOnline());
+                            if (tempUser.getId().equals(receiverId)) {
+                                chat.setAvatar(tempUser.getAvatar());
+                                chat.setName(tempUser.getName());
+                                viewInterface.onUpdateInforSuccess(tempUser.getName(), tempUser.getAvatar());
+                            }
+                            viewInterface.onUpdateOnlineStatus(chat.getOnline().containsValue(true));
+                        }
+                    });
+        }
+//        if (Objects.equals(type_chat, Constants.KEY_PRIVATE_CHAT)){
+//            db.collection(Constants.KEY_COLLECTION_USERS)
+//                    .document(receiverId)
+//                    .addSnapshotListener((v,err)->{
+//                        if (v == null || !v.exists()){
+//                            return;
+//                        }
+//                        chat.setAvatar(v.getString(Constants.KEY_AVATAR));
+//                        chat.setName(v.getString(Constants.KEY_NAME));
+////                                    chat.setOnline(Boolean.FALSE.equals(v.getBoolean(Constants.KEY_ONLINE)));
+//                        viewInterface.onUpdateInforSuccess(v.getString(Constants.KEY_NAME), v.getString(Constants.KEY_AVATAR), v.getBoolean(Constants.KEY_ONLINE));
+//                    });
+//        }
         db.collection(Constants.KEY_COLLECTION_CHAT)
                 .document(chatId)
-                .addSnapshotListener((value, e)->{
-                    if (e != null){
+                .addSnapshotListener((value, e)-> {
+                    if (e != null) {
                         viewInterface.onFindChatError();
                         return;
                     }
-                    if (value == null || !value.exists()){
+                    if (value == null || !value.exists()) {
                         viewInterface.onChatNotExist();
                         return;
                     }
-                    chat = value.toObject(Chat.class);
-                    if (Objects.equals(type_chat, Constants.KEY_PRIVATE_CHAT)){
-                        db.collection(Constants.KEY_COLLECTION_USERS)
-                                .document(receiverId)
-                                .addSnapshotListener((v,err)->{
-                                    if (v == null || !v.exists()){
-                                        return;
-                                    }
-                                    chat.setAvatar(v.getString(Constants.KEY_AVATAR));
-                                    chat.setName(v.getString(Constants.KEY_NAME));
-//                                    chat.setOnline(Boolean.FALSE.equals(v.getBoolean(Constants.KEY_ONLINE)));
-                                    viewInterface.onUpdateInforSuccess(v.getString(Constants.KEY_NAME), v.getString(Constants.KEY_AVATAR), v.getBoolean(Constants.KEY_ONLINE));
-                                });
-                    }else
-                        viewInterface.onUpdateInforSuccess(value.getString(Constants.KEY_NAME), value.getString(Constants.KEY_AVATAR), value.getBoolean(Constants.KEY_ONLINE));
+                    Chat tempChat = value.toObject(Chat.class);
+                    tempChat.setFcm(chat.getFcm());
+                    tempChat.getInchat().put(preferenceManager.getString(Constants.KEY_USED_ID), false);
+                    chat = tempChat;
+                    if (Objects.equals(type_chat, Constants.KEY_GROUP_CHAT)) {
+                        viewInterface.onUpdateInforSuccess(value.getString(Constants.KEY_NAME), value.getString(Constants.KEY_AVATAR));
+                    }
+                    viewInterface.onUpdateFcmOrInchat(chat.getFcm(), tempChat.getInchat());
                 });
 
     }
@@ -369,14 +326,14 @@ public class ChatPresenter {
                         viewInterface.onChatNotExist();
                         return;
                     }
-                    viewInterface.onUpdateInforSuccess(value.getString(Constants.KEY_NAME), value.getString(Constants.KEY_AVATAR), value.getBoolean(Constants.KEY_ONLINE));
+                    viewInterface.onUpdateInforSuccess(value.getString(Constants.KEY_NAME), value.getString(Constants.KEY_AVATAR));
 
                 });
     }
 
     public void updateOnlineStatus(String chatId, boolean b) {
-//        db.collection(Constants.KEY_COLLECTION_CHAT)
-//                .document(chatId)
-//                .update(Constants.KEY_ONLINE,)
+        db.collection(Constants.KEY_COLLECTION_CHAT)
+                .document(chatId)
+                .update(Constants.KEY_IN_CHAT + "." + preferenceManager.getString(Constants.KEY_USED_ID), b);
     }
 }

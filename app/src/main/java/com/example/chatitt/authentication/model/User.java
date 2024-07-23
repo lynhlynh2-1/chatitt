@@ -10,6 +10,7 @@ public class User implements Serializable {
     private String email, phonenumber,  password, re_password, avatar, name, id, coverImage, address, country, city, gender, birthday;
     private Boolean checked = false;
     private Boolean online = false;
+    private String fcmToken;
     private List<String> friend_list, my_friend_request, other_request_friend;
     public User(String email, String password, String re_password, String avatar, String name) {
         this.email = email;
@@ -24,6 +25,18 @@ public class User implements Serializable {
         this.password = password;
     }
     public User() {
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
+    public void setOnline(Boolean online) {
+        this.online = online;
     }
 
     public List<String> getFriend_list() {

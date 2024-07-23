@@ -2,7 +2,6 @@ package com.example.chatitt.chats.chat.view;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.example.chatitt.ultilities.Constants.TAG;
-import static com.example.chatitt.ultilities.Helpers.showToast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -14,34 +13,21 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
-import com.devlomi.record_view.RecordButton;
 import com.devlomi.record_view.RecordPermissionHandler;
-import com.devlomi.record_view.RecordView;
-import com.example.chatitt.MainActivity;
 import com.example.chatitt.R;
 import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.chats.chat.presenter.ChatContract;
@@ -51,6 +37,7 @@ import com.example.chatitt.chats.chat_list.model.Message;
 import com.example.chatitt.chats.group_chat.info.view.GroupChatInfoActivity;
 import com.example.chatitt.chats.individual_chat.info.view.PrivateChatInfoActivity;
 import com.example.chatitt.databinding.ActivityChatBinding;
+import com.example.chatitt.firebase.AccessToken;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.Helpers;
 import com.example.chatitt.ultilities.Permissions;
@@ -58,30 +45,19 @@ import com.example.chatitt.ultilities.PreferenceManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-
-import javax.crypto.SecretKey;
 
 public class ChatActivity extends AppCompatActivity implements ChatContract.ViewInterface{
 
@@ -123,23 +99,12 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 
         binding.shimmerEffect.startShimmerAnimation();
 
-//        if(getIntent().getStringExtra(Constants.KEY_COLLECTION_CHAT) != null){
-////            chatPresenter.findChatById();
-//            Log.e(TAG, "ChatId Existed");
-//            binding.textName.setText(getIntent().getStringExtra(Constants.KEY_NAME));
-//            binding.imageInfo.setImageResource(R.drawable.cover_img_placeholder);
-//            binding.textOnline.setText( "Đang hoạt động");
-//            binding.textOnline.setTextColor( getResources().getColor(R.color.green) );
-//            chatPresenter.findChatById(getIntent().getStringExtra("ChatId"));
-//        }
-
         chat = (Chat) getIntent().getSerializableExtra(Constants.KEY_COLLECTION_CHAT);
 
         userModel = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
 
         if (chat != null){
             String receivedId = (String) getIntent().getSerializableExtra(Constants.KEY_RECEIVER_ID);
-//            chatPresenter.joinChat(preferenceManager.getString(Constants.KEY_USED_ID),preferenceManager.getString(Constants.KEY_NAME),preferenceManager.getString(Constants.KEY_AVATAR), chat.getId(), chat.getType(), preferenceManager.getString(Constants.KEY_PUBLIC_KEY));
             if (chat.getName().equals("Han")){
                 Log.d(TAG, "init(): " + chat.getName());
             }
@@ -147,12 +112,13 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             if (chat.getAvatar() != null && !chat.getAvatar().isEmpty()){
                 binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat.getAvatar()));
             }
-            binding.textOnline.setText(Objects.equals(chat.getOnline(), "1") ? "Đang hoạt động": "Ngoại tuyến");
-            binding.textOnline.setTextColor(Objects.equals(chat.getOnline(), "1") ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
+            binding.textOnline.setText(chat.getOnline().containsValue(true) ? "Đang hoạt động": "Ngoại tuyến");
+            binding.textOnline.setTextColor(chat.getOnline().containsValue(true) ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
             chatPresenter.getMessages(chat.getId());
             chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chat.getType_chat(), this);
-
-            chatPresenter.listenChatInfo(chat.getId(), chat.getType_chat(), receivedId);
+            List<String> memIds = new ArrayList<>(chat.getMembers());
+            memIds.add(chat.getLeader());
+            chatPresenter.listenChatInfo(chat.getId(), chat.getType_chat(), receivedId, memIds);
         }else if (userModel != null){
             binding.textName.setText(userModel.getName());
             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(userModel.getAvatar()));
@@ -315,15 +281,6 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
                 it.putExtra(Constants.KEY_COLLECTION_CHAT, chat);
                 mStartForResult.launch(it);
             }
-//            else if(chatNoLastMessObj != null){
-//                if (Objects.equals(chatNoLastMessObj.getType(), Constants.KEY_PRIVATE_CHAT)){
-//                    it = new Intent(getApplicationContext(), PrivateChatInfoActivity.class);
-//                }else {
-//                    it = new Intent(getApplicationContext(), GroupChatInfoActivity.class);
-//                }
-//                it.putExtra(Constants.KEY_COLLECTION_CHAT_NO_LMSG, chatNoLastMessObj);
-//                mStartForResult.launch(it);
-//            }
             else{
                 Toast.makeText(getApplicationContext(),"Hãy gửi tin nhắn đầu tiên để xem thông tin", Toast.LENGTH_SHORT).show();
             }
@@ -465,7 +422,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     }
 
     private void send(String content, String type) {
-            if (chat!=null){
+            if (chat!=null && chat.getId() != null && !chat.getId().isEmpty()){
                 chatPresenter.send(chat.getId(), content, type, messageList.size());
             }else if (userModel != null){
                 ArrayList<String> mems = new ArrayList<>();
@@ -557,8 +514,9 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     }
 
     @Override
-    public void onUpdateInforSuccess(String name, String avatar, Boolean online) {
-        chat = chatPresenter.getChat();
+    public void onUpdateInforSuccess(String name, String avatar) {
+        chat.setName(name);
+        chat.setAvatar(avatar);
 //        chatPresenter.joinChat(preferenceManager.getString(Constants.KEY_USED_ID),preferenceManager.getString(Constants.KEY_NAME),preferenceManager.getString(Constants.KEY_AVATAR), chatNoLastMessObj.getId(), chatNoLastMessObj.getType(), preferenceManager.getString(Constants.KEY_PUBLIC_KEY));
 //        chatPresenter.getMessages(chatNoLastMessObj.getId());
 //        chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chatNoLastMessObj.getType(), secretKey, this)
@@ -568,10 +526,21 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         binding.textName.setText(name);
         if (chat.getAvatar() != null && !chat.getAvatar().isEmpty())
             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(avatar));
-        binding.textOnline.setText(Objects.equals(online, true) ? "Đang hoạt động": "Ngoại tuyến");
-        binding.textOnline.setTextColor(Objects.equals(online, true) ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
-//        showToast(getApplicationContext(), "Thông tin nhóm vừa được thay đổi!");
+        //        showToast(getApplicationContext(), "Thông tin nhóm vừa được thay đổi!");
     }
+
+    @Override
+    public void onUpdateOnlineStatus(Boolean status) {
+        binding.textOnline.setText(Objects.equals(status, true) ? "Đang hoạt động": "Ngoại tuyến");
+        binding.textOnline.setTextColor(Objects.equals(status, true) ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
+    }
+
+    @Override
+    public void onUpdateFcmOrInchat(Map<String, String> fcm, Map<String, Object> inchat) {
+        chat.setFcm(fcm);
+        chat.setInchat(inchat);
+    }
+
     @Override
     public void onFindChatError() {
 //        binding.shimmerEffect.stopShimmerAnimation();
@@ -625,7 +594,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 //        chatPresenter.sendRealtime(content,typeMess, preferenceManager.getString(Constants.KEY_USED_ID), chatNoLastMessObj.getId());
 
 
-//        sendNoti(content,typeMess, chatNoLastMessObj.getName(), chatNoLastMessObj.getType());
+        sendNoti(content,typeMess, chat.getName(), chat.getType_msg());
 
     }
 
@@ -652,8 +621,13 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 
     private void sendNoti(String content, String typeMess, String group_name, String type_chat){
         try {
-            JSONArray tokens = new JSONArray(chat.getFcm());
-
+            ArrayList<String> tokens = new ArrayList<>();
+            for (String idOfflineUser : chat.getInchat().keySet()){
+                if (!idOfflineUser.equals(preferenceManager.getString(Constants.KEY_USED_ID))
+                        && !(Boolean) chat.getInchat().get(idOfflineUser)){
+                    tokens.add(chat.getFcm().get(idOfflineUser));
+                }
+            }
             JSONObject data = new JSONObject();
             data.put("ChatId", chat.getId());
             data.put(Constants.KEY_NAME, group_name);
@@ -664,57 +638,28 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             data.put(Constants.TYPE_MESSAGES_SEND, typeMess);
             data.put("TypeChat", type_chat);
 
+            JSONObject notification = new JSONObject();
+            notification.put("title", "New Message");
+            notification.put("body", "");
 
 
-            JSONObject body = new JSONObject();
-            body.put(Constants.REMOTE_MSG_DATA,data);
-            body.put(Constants.REMOTE_MSG_REGISTRATION_IDS,tokens);
+            JSONObject mess = new JSONObject();
+            mess.put("notification", notification);
+            mess.put("data", data);
+            for(String token : tokens){
+                mess.put("token", token);
 
-            Log.d("Send Noti Request", body.toString());
+                JSONObject body = new JSONObject();
+                body.put("message", mess);
 
-            chatPresenter.sendNotification(body.toString());
+                Log.d("Send Noti Request", body.toString());
+                chatPresenter.sendNotification(body.toString(), AccessToken.getAccessToken());
+            }
         }catch (Exception e){
-            showToast(getApplicationContext(), e.getMessage());
+//            showToast(getApplicationContext(), e.getMessage());
+            Log.d(TAG, "Send Noti Fail: " + e.getMessage());
+
         }
-    }
-    @Override
-    public void receiveNewMsgRealtime(String userId,String username , String avatar,String room,String typeRoom,String publicKey,String text,String typeMess, String time) {
-//        User userModel1 = new User(userId, username, avatar);
-//        Message message = new Message(room,userModel1,text,typeMess,time , "2");
-//        messageList.add(message);
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                // call the invalidate()
-//                chatAdapter.notifyItemRangeInserted(messageList.size(),messageList.size());
-//                binding.usersRecyclerView.smoothScrollToPosition(messageList.size() - 1);
-//            }
-//        });
-//        chatAdapter.addData();
-
-    }
-
-    @Override
-    public void updateChatRealtime(String chatId, String name, String avatar) {
-//        runOnUiThread(new Runnable() {
-//            public void run() {
-//                final Toast toast = Toast.makeText(getApplicationContext(), "Thông tin nhóm vừa được thay đổi!", Toast.LENGTH_SHORT);
-//                toast.show();
-//            }
-//        });
-//        if (name != null){
-//            if (chat != null && chat.getId().equals(chatId))
-//                chat.setName(name);
-//            binding.textName.setText(name);
-//        }
-//        if (avatar != null){
-//            if (chat != null && chat.getId().equals(chatId))
-//                chat.setAvatar(avatar);
-//            else if (chatNoLastMessObj != null && chatNoLastMessObj.getId().equals(chatId))
-//                chatNoLastMessObj.setAvatar(avatar);
-//            binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(avatar));
-//        }
-
     }
 
 
@@ -723,25 +668,6 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         Intent it = new Intent(this, ShowImageActivity.class);
         it.putExtra(Constants.KEY_TYPE_IMAGE, content);
         startActivity(it);
-    }
-
-    @Override
-    public void onFindChatByIdSucces() {
-        chat = chatPresenter.getChat();
-        binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(chat.getAvatar()));
-        chatPresenter.getMessages(chat.getId());
-        chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chat.getType_chat(), this);
-    }
-
-    @Override
-    public void onFindChatByIdError() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                final Toast toast = Toast.makeText(getApplicationContext(), "Lấy thông tin thất bại!", Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
-        finish();
     }
 
     @Override
@@ -813,7 +739,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (chat != null)
+        if (chat != null && chat.getId() != null)
             chatPresenter.updateOnlineStatus(chat.getId(), false);
 //        if(chat!= null){
 //            chatPresenter.leaveChat(preferenceManager.getString(Constants.KEY_NAME),chat.getId());

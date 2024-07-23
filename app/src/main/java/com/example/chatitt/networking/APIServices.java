@@ -23,7 +23,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface APIServices {
-    @POST("send")
+    @POST(".")
     Call<String> sendMessage(
             @HeaderMap HashMap<String, String> headers,
             @Body String messageBody

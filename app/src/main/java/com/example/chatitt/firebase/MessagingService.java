@@ -16,10 +16,14 @@ import com.example.chatitt.R;
 import com.example.chatitt.chats.chat.view.ChatActivity;
 import com.example.chatitt.ultilities.Constants;
 import com.example.chatitt.ultilities.PreferenceManager;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -39,6 +43,7 @@ public class MessagingService extends FirebaseMessagingService {
         // FCM registration token to your app server.
         sendRegistrationToServer(token);
     }
+
 
     public void sendRegistrationToServer(String token) {
 
@@ -77,7 +82,7 @@ public class MessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
-
+        Log.d("lynh.pham", "onMessageReceived");
         Map<String, String> data = message.getData();
 
         // Kiểm tra các trường dữ liệu tùy chỉnh để phân biệt các loại thông báo

@@ -1,15 +1,7 @@
 package com.example.chatitt.chats.chat_list.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
-
-import com.google.firebase.Timestamp;
-import com.google.type.DateTime;
-
 import java.io.Serializable;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +15,14 @@ public class Chat implements Serializable {
     private String timestamp;
     private String lastMessage;
     private String senderName;
-    private Map<String, Object> online;
+    private Map<String, Object> inchat = new HashMap<>();
+    private Map<String, Object> online = new HashMap<>();
     private String avatar;
-    private List<String> fcm;
+    private Map<String, String> fcm = new HashMap<>();
 
     public Chat(){
     }
-    public Chat(String id, String name, String leader, List<String> members, String type_chat, String type_msg, String timestamp, String lastMessage, String senderName, Map<String, Object> online, String avatar, List<String> fcm) {
+    public Chat(String id, String name, String leader, List<String> members, String type_chat, String type_msg, String timestamp, String lastMessage, String senderName, Map<String, Object> inchat, String avatar, Map<String, String> fcm) {
         this.id = id;
         this.name = name;
         this.leader = leader;
@@ -39,9 +32,18 @@ public class Chat implements Serializable {
         this.timestamp = timestamp;
         this.lastMessage = lastMessage;
         this.senderName = senderName;
-        this.online = online;
+        this.inchat = inchat;
         this.avatar = avatar;
         this.fcm = fcm;
+    }
+
+    public Map<String, Object> getOnline() {
+        return online;
+    }
+
+    public void updateOnline(String id, Boolean status) {
+        if (this.online == null) this.online = new HashMap<>();
+        this.online.put(id, status);
     }
 
     public String getLeader() {
@@ -53,11 +55,11 @@ public class Chat implements Serializable {
     }
 
 
-    public List<String> getFcm() {
+    public Map<String, String> getFcm() {
         return fcm;
     }
 
-    public void setFcm(List<String> fcm) {
+    public void setFcm(Map<String, String> fcm) {
         this.fcm = fcm;
     }
 
@@ -101,12 +103,12 @@ public class Chat implements Serializable {
         this.avatar = avatar;
     }
 
-    public Map<String, Object> getOnline() {
-        return online;
+    public Map<String, Object> getInchat() {
+        return inchat;
     }
 
-    public void setOnline(Map<String, Object> online) {
-        this.online = online;
+    public void setInchat(Map<String, Object> inchat) {
+        this.inchat = inchat;
     }
 
     public String getType_chat() {
@@ -139,5 +141,10 @@ public class Chat implements Serializable {
 
     public void setSenderName(String senderName) {
         this.senderName = senderName;
+    }
+
+    public void updateFCMUser(String id, String fcmToken) {
+        if (this.fcm == null) this.fcm = new HashMap<>();
+        this.fcm.put(id, fcmToken);
     }
 }

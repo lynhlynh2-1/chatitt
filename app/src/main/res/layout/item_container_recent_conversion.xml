@@ -20,6 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:visibility="invisible"
         android:id="@+id/imageStatus"
         android:layout_width="@dimen/_10sdp"
         android:layout_height="@dimen/_10sdp"
