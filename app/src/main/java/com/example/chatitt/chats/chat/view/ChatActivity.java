@@ -103,6 +103,14 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 
         userModel = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
 
+        String chatId = getIntent().getStringExtra("ChatId");
+        String nameChat = getIntent().getStringExtra(Constants.KEY_NAME);
+
+        if(chatId != null){
+            chatPresenter.findChat(chatId);
+            binding.textName.setText(nameChat);
+        }
+
         if (chat != null){
             String receivedId = (String) getIntent().getSerializableExtra(Constants.KEY_RECEIVER_ID);
             if (chat.getName().equals("Han")){
@@ -548,6 +556,19 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 //        Toast.makeText(getApplicationContext(),"Lỗi khi tìm đoạn chat", Toast.LENGTH_SHORT).show();
 //        finish();
 
+    }
+
+    @Override
+    public void onFindChatSuccess(Chat chat) {
+        this.chat = chat;
+
+        binding.textOnline.setText(chat.getOnline().containsValue(true) ? "Đang hoạt động": "Ngoại tuyến");
+        binding.textOnline.setTextColor(chat.getOnline().containsValue(true) ? getResources().getColor(R.color.green): getResources().getColor(R.color.seed) );
+        chatPresenter.getMessages(chat.getId());
+        chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chat.getType_chat(), this);
+        List<String> memIds = new ArrayList<>(chat.getMembers());
+        memIds.add(chat.getLeader());
+        chatPresenter.listenChatInfo(chat.getId(), chat.getType_chat(), "", memIds);
     }
     @Override
     public void onGetMessagesSuccess() {

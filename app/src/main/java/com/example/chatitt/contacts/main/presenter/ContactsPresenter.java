@@ -39,4 +39,16 @@ public class ContactsPresenter {
                     }
                 });
     }
+
+    public void addUserListener(String userId) {
+        db.collection(Constants.KEY_COLLECTION_USERS)
+                .document(userId)
+                .addSnapshotListener((v,e)->{
+                    if(e != null) return;
+                    if(v != null && v.exists()){
+                        User user = v.toObject(User.class);
+                        viewInterface.onUserUpdate(user);
+                    }
+                });
+    }
 }

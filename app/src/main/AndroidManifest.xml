@@ -39,7 +39,8 @@
             android:exported="false" />
         <activity
             android:name=".chats.chat.view.ChatActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".authentication.login.view.EmailInputActivity"
             android:exported="false" />

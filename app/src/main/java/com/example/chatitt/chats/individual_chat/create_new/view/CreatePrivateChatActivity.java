@@ -70,8 +70,16 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(!TextUtils.isEmpty(query.trim())){
-                    List<User> userModels = Helpers.checkStringContain(query, userModelList);
-                    adapter.reset(userModels);
+                    if (!isFriendTab){
+                        createChatPrivatePresenter.searchUser(binding.searchView.getQuery().toString());
+                        binding.shimmerEffect.startShimmerAnimation();
+                        binding.shimmerEffect.setVisibility(View.VISIBLE);
+                        binding.usersRecyclerView.setVisibility(View.GONE);
+                        binding.textErrorMessage.setVisibility(View.GONE);
+                    }else{
+                        List<User> userModels = Helpers.checkStringContain(query, userModelList);
+                        adapter.reset(userModels);
+                    }
                 }else{
                     adapter.reset(userModelList);
                 }
@@ -242,6 +250,7 @@ public class CreatePrivateChatActivity extends AppCompatActivity implements Crea
 
     @Override
     public void onDelFriendSuccess(int i) {
+        binding.swipeLayout.setRefreshing(false);
         binding.shimmerEffect.setVisibility(View.GONE);
         binding.usersRecyclerView.setVisibility(View.VISIBLE);
         userModelList.remove(i);

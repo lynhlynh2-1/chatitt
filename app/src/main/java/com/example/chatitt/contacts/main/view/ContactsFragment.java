@@ -20,6 +20,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.example.chatitt.R;
+import com.example.chatitt.authentication.model.User;
 import com.example.chatitt.chats.individual_chat.create_new.view.CreatePrivateChatActivity;
 import com.example.chatitt.contacts.main.presenter.ContactsContract;
 import com.example.chatitt.contacts.main.presenter.ContactsPresenter;
@@ -63,6 +64,7 @@ public class ContactsFragment extends Fragment implements ContactsContract.ViewI
         }
         init();
         setListener();
+        presenter.addUserListener(preferenceManager.getString(Constants.KEY_USED_ID));
         return rootView;
     }
 
@@ -192,5 +194,10 @@ public class ContactsFragment extends Fragment implements ContactsContract.ViewI
         Intent intent = new Intent(requireContext(), ProfileScanUserActivity.class);
         intent.putExtra("userId", presenter.getUserModels().getId());
         startActivity(intent);
+    }
+
+    @Override
+    public void onUserUpdate(User user) {
+        binding.username.setText(user.getName());
     }
 }

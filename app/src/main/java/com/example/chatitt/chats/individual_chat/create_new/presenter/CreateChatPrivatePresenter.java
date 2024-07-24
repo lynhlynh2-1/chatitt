@@ -105,7 +105,7 @@ public class CreateChatPrivatePresenter {
                             }
                             getUserInforAndListener(userIDList);
                         }else if (tempUser.getFriend_list().size() < userModelList.size()){
-                            //Del My Req
+                            //Del Friend
                             int i = 0;
                             for (User user : userModelList){
                                 if (i == tempUser.getFriend_list().size()){
@@ -154,6 +154,9 @@ public class CreateChatPrivatePresenter {
                         }
                         if (value != null && value.exists()) {
                             User user = value.toObject(User.class);
+
+                            if (!user.getFriend_list().contains(preferenceManager.getString(Constants.KEY_USED_ID))) return;
+
                             int i = 0;
                             for (User userr : userModelList) {
                                 if (userr.getId().equals(user.getId())) {

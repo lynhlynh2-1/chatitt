@@ -12,6 +12,7 @@ public class ChatContract {
         void onGetMessagesSuccess();
         void onGetMessagesError();
         void onFindChatError();
+        void onFindChatSuccess(Chat chat);
         void onSendError(int pos);
         void onSendSuccess(String content, String typeMess, int pos);
         void onCreateAndSendSuccess(String content, String typeMess, int pos);

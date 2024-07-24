@@ -173,6 +173,7 @@ public class MemActivityPresenter {
                         }
                         if (value != null && value.exists()){
                             User user = value.toObject(User.class);
+
                             int i = 0;
                             for (User userr : userModelList){
                                 if (userr.getId().equals(user.getId())){

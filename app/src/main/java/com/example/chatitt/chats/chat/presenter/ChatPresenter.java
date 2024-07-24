@@ -314,6 +314,20 @@ public class ChatPresenter {
 
     }
 
+    public void findChat(String chatId){
+        db.collection(Constants.KEY_COLLECTION_CHAT)
+                .document(chatId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        chat = documentSnapshot.toObject(Chat.class);
+                        if(chat != null)
+                            viewInterface.onFindChatSuccess(chat);
+                    }
+                });
+    }
+
     public void listenReceiverInfo(String id) {
         db.collection(Constants.KEY_COLLECTION_USERS)
                 .document(id)
