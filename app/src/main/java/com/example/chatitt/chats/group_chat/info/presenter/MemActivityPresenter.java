@@ -90,8 +90,8 @@ public class MemActivityPresenter {
                                     break;
                                 }
                             }
-                            userModelList.remove(i);
-                            viewInterface.onDelMemSuccess(i);
+                            userModelList.remove(i+1);
+                            viewInterface.onDelMemSuccess(i+1);
                         }
                     }
                 });
@@ -156,9 +156,10 @@ public class MemActivityPresenter {
     public void getMember(Chat chat){
         userModelList.clear();
         viewInterface.resetAdapter();
-        List<String> userIDList = new ArrayList<>(chat.getMembers());
-        userIDList.add(0, chat.getLeader());
-        getUserInforAndListener(userIDList);
+        registerMemberListener(chat.getId());
+//        List<String> userIDList = new ArrayList<>(chat.getMembers());
+//        userIDList.add(0, chat.getLeader());
+//        getUserInforAndListener(userIDList);
     }
 
     private void getUserInforAndListener(List<String> userIDList){
@@ -181,10 +182,7 @@ public class MemActivityPresenter {
                                 }
                                 i ++;
                             }
-                            if(i >= userModelList.size()){
-                                userModelList.add(user);
-                                viewInterface.onGetMemberSuccess(user);
-                            }else {
+                            if(i < userModelList.size()){
                                 userModelList.set(i, user);
                                 viewInterface.onMemInfoChangeSuccess(i);
                             }

@@ -149,6 +149,9 @@ public class SendReqPresenter {
                         }
                         if (value != null && value.exists()){
                             User user = value.toObject(User.class);
+
+                            if (!user.getOther_request_friend().contains(preferenceManager.getString(Constants.KEY_USED_ID))) return;
+
                             int i = 0;
                             for (User userr : userModelList){
                                 if (userr.getId().equals(user.getId())){
