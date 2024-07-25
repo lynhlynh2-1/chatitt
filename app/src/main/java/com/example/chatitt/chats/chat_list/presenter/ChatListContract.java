@@ -30,5 +30,7 @@ public class ChatListContract {
         void onNewMemberAdded();
 
         void onUpdateOnlineStatus(User user);
+
+        void notifyChatRemove(int chatIndex);
     }
 }

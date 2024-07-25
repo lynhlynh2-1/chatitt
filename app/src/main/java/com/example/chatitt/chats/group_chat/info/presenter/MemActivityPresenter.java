@@ -182,7 +182,10 @@ public class MemActivityPresenter {
                                 }
                                 i ++;
                             }
-                            if(i < userModelList.size()){
+                            if(i >= userModelList.size()){
+                                userModelList.add(user);
+                                viewInterface.onGetMemberSuccess(user);
+                            }else {
                                 userModelList.set(i, user);
                                 viewInterface.onMemInfoChangeSuccess(i);
                             }

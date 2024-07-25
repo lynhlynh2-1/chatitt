@@ -121,7 +121,7 @@ public class ChatListPresenter {
                                         .collect(Collectors.toList())
                                         .indexOf(chatId);
                                 Chat modifiedChat = chatList.get(chatIndex);
-                                if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT) && !chat.getName().equals(modifiedChat.getName())){
+                                if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT) && (!chat.getName().equals(modifiedChat.getName()) || !chat.getAvatar().equals(modifiedChat.getAvatar()))){
                                     modifiedChat.setName(chat.getName());
                                     modifiedChat.setAvatar(chat.getAvatar());
                                     viewInterface.updateChat(chatIndex);
@@ -133,6 +133,16 @@ public class ChatListPresenter {
                                 modifiedChat.setType_msg(chat.getType_msg());
                                 chatList.sort((o1,o2)-> o2.getTimestamp().compareTo(o1.getTimestamp()));
                                 viewInterface.notifyChatMove(chatIndex,0);
+                            }
+                            if(documentChange.getType() == DocumentChange.Type.REMOVED) {
+                                QueryDocumentSnapshot docRef = documentChange.getDocument();
+                                Chat chat = docRef.toObject(Chat.class);
+                                String chatId = chat.getId(); // Name to search for
+                                int chatIndex = chatList.stream()
+                                        .map(Chat::getId)
+                                        .collect(Collectors.toList())
+                                        .indexOf(chatId);
+                                viewInterface.notifyChatRemove(chatIndex);
                             }
                         }
                         if (hasAdd){

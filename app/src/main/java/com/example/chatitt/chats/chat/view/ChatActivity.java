@@ -524,7 +524,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     @Override
     public void onUpdateInforSuccess(String name, String avatar) {
         chat.setName(name);
-        chat.setAvatar(avatar);
+
 //        chatPresenter.joinChat(preferenceManager.getString(Constants.KEY_USED_ID),preferenceManager.getString(Constants.KEY_NAME),preferenceManager.getString(Constants.KEY_AVATAR), chatNoLastMessObj.getId(), chatNoLastMessObj.getType(), preferenceManager.getString(Constants.KEY_PUBLIC_KEY));
 //        chatPresenter.getMessages(chatNoLastMessObj.getId());
 //        chatAdapter = new ChatAdapter(messageList, preferenceManager.getString(Constants.KEY_USED_ID), chatNoLastMessObj.getType(), secretKey, this)
@@ -532,8 +532,10 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             Log.d(TAG, "onUpdateInforSuccess: " + name);
         }
         binding.textName.setText(name);
-        if (chat.getAvatar() != null && !chat.getAvatar().isEmpty())
+        if (chat.getAvatar() != null && !chat.getAvatar().isEmpty()){
             binding.imageInfo.setImageBitmap(Helpers.getBitmapFromEncodedString(avatar));
+            chat.setAvatar(avatar);
+        }
         //        showToast(getApplicationContext(), "Thông tin nhóm vừa được thay đổi!");
     }
 

@@ -260,6 +260,10 @@ public class ChatListFragment extends Fragment implements ChatListContract.ViewI
         conversationsAdapter.notifyItemChanged(index);
         conversationsAdapter.notifyItemChanged(pos);
     }
+    @Override
+    public void notifyChatRemove(int index) {
+        conversationsAdapter.notifyItemRemoved(index);
+    }
 
     @Override
     public void updateChat(int pos) {

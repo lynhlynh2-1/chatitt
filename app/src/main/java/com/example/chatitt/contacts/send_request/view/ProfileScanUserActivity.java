@@ -123,6 +123,7 @@ public class ProfileScanUserActivity extends AppCompatActivity implements Profil
         binding.textName.setText(you.getName());
         if (Objects.equals(presenter.getStatus(), Constants.KEY_NOT_FRIEND)) {
             binding.before.setVisibility(View.VISIBLE);
+            binding.addFriend.setVisibility(View.VISIBLE);
         } else if (Objects.equals(presenter.getStatus(), Constants.KEY_IS_FRIEND)) {
             binding.before.setVisibility(View.VISIBLE);
             binding.addFriend.setVisibility(View.GONE);
