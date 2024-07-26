@@ -121,7 +121,7 @@ public class ChatListPresenter {
                                         .collect(Collectors.toList())
                                         .indexOf(chatId);
                                 Chat modifiedChat = chatList.get(chatIndex);
-                                if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT) && (!chat.getName().equals(modifiedChat.getName()) || !chat.getAvatar().equals(modifiedChat.getAvatar()))){
+                                if (Objects.equals(chat.getType_chat(), Constants.KEY_GROUP_CHAT) && (!chat.getName().equals(modifiedChat.getName()) || !(chat.getAvatar() != null && chat.getAvatar().equals(modifiedChat.getAvatar())))){
                                     modifiedChat.setName(chat.getName());
                                     modifiedChat.setAvatar(chat.getAvatar());
                                     viewInterface.updateChat(chatIndex);

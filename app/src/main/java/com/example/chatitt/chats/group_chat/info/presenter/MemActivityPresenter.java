@@ -81,7 +81,6 @@ public class MemActivityPresenter {
                                     continue;
                                 }
                                 if (i == chat.getMembers().size()){
-                                    i ++;
                                     break;
                                 }
                                 if (user.getId().equals(chat.getMembers().get(i))){
@@ -90,8 +89,9 @@ public class MemActivityPresenter {
                                     break;
                                 }
                             }
-                            userModelList.remove(i+1);
-                            viewInterface.onDelMemSuccess(i+1);
+                            if(i < userModelList.size() - 1) i++;
+                            userModelList.remove(i);
+                            viewInterface.onDelMemSuccess(i);
                         }
                     }
                 });
